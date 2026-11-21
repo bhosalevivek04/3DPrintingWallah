@@ -1,6 +1,7 @@
 import React from "react";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -10,8 +11,11 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <div className="py-12 sm:py-16">
+    <div className="pt-4 pb-12 sm:pb-16">
       <Container className="max-w-3xl">
+        {/* Global Breadcrumb */}
+        <Breadcrumbs items={[{ label: "About" }]} className="mb-6" />
+
         <SectionHeading
           eyebrow="Our story"
           title="A small workshop with big ambitions."

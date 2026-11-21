@@ -6,7 +6,7 @@ import { siteConfig } from "@/config/site";
 export function SiteFooter() {
   return (
     <footer className="w-full bg-[var(--brand-inverse)] text-white pt-16 pb-12">
-      <div className="max-w-[1280px] mx-auto px-6 sm:px-8 flex flex-col gap-12">
+      <div className="max-w-[1440px] mx-auto px-4 lg:px-8 flex flex-col gap-12">
         {/* Contact Invitation Row (Figma 0:1899) */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-12 border-b border-[var(--brand-inverse-border)]">
           <div>
@@ -128,24 +128,27 @@ export function SiteFooter() {
             <ul className="flex flex-col gap-2.5 text-[14px] text-[#8B99A8]">
               <li>
                 <a
-                  href="#instagram"
-                  className="hover:text-white transition-colors"
+                  href={siteConfig.contact.instagramUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition-colors inline-flex items-center gap-2 group"
                 >
-                  {siteConfig.contact.instagram}
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#linkedin"
-                  className="hover:text-white transition-colors"
-                >
-                  {siteConfig.contact.linkedin}
+                  <svg
+                    className="h-4 w-4 fill-none stroke-current stroke-2 text-[#8B99A8] group-hover:text-pink-400 transition-colors"
+                    viewBox="0 0 24 24"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+                  </svg>
+                  <span>Instagram</span>
+                  <span className="text-xs text-[#526170] group-hover:text-white transition-colors">↗</span>
                 </a>
               </li>
             </ul>
-            <p className="mt-2 text-[14px] text-[#526170] leading-relaxed">
-              Social profile destinations are placeholders to be added.
-            </p>
           </div>
         </div>
 

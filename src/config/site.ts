@@ -15,12 +15,13 @@ export const siteConfig = {
     trackOrder: "/track-order",
     contact: "/contact",
     faq: "#faq",
+    instagram: "https://www.instagram.com/3dprintingwallah/",
   },
   contact: {
     email: "support@newtronlabs.in",
     contactText: "Contact 3D Printing Wallah ↗",
     instagram: "Instagram ↗",
-    linkedin: "LinkedIn ↗",
+    instagramUrl: "https://www.instagram.com/3dprintingwallah/",
   },
   copyright: "© 3D Printing Wallah. Made for ideas worth making.",
 } as const;

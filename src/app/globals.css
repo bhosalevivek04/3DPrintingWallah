@@ -18,6 +18,19 @@
   --brand-inverse-border: #233547;
   --on-inverse: #FFFFFF;
   --on-inverse-muted: #8B99A8;
+
+  /* ─── Motion & Easing Tokens (Emil Kowalski / Apple Design Philosophy) ─── */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-spring: cubic-bezier(0.32, 0.72, 0, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+
+  /* ─── Apple-inspired Layered Shadows ─── */
+  --shadow-subtle: 0 1px 2px rgba(29, 43, 57, 0.04), 0 2px 4px rgba(29, 43, 57, 0.02);
+  --shadow-card: 0 2px 4px rgba(29, 43, 57, 0.03), 0 8px 16px -2px rgba(29, 43, 57, 0.04);
+  --shadow-hover: 0 4px 8px rgba(29, 43, 57, 0.04), 0 16px 32px -4px rgba(29, 43, 57, 0.08);
 }
 
 @theme inline {
@@ -43,6 +56,7 @@
   html {
     scroll-behavior: smooth;
     text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
   }
 
   body {
@@ -55,10 +69,47 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
+  /* Fast, responsive touch interactions */
+  button, a, [role="button"] {
+    touch-action: manipulation;
+  }
+
+  /* Prevent automatic iOS input zoom */
+  @media (pointer: coarse) {
+    input, textarea, select {
+      font-size: 16px !important;
+    }
+  }
+
+  /* Tactile press response on interactive controls */
+  button:active,
+  a.btn-interactive:active,
+  [role="button"]:active {
+    transform: scale(0.97);
+    transition: transform var(--duration-fast) var(--ease-out);
+  }
+
   :focus-visible {
     outline: 2px solid var(--primary);
     outline-offset: 2px;
   }
+}
+
+/* ─── Apple-Style Micro-Interactions & Surfaces ─── */
+.glass-header {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.apple-card {
+  box-shadow: var(--shadow-card);
+  transition: transform var(--duration-normal) var(--ease-out), box-shadow var(--duration-normal) var(--ease-out), border-color var(--duration-normal) var(--ease-out);
+}
+
+.apple-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
 }
 
 @media (prefers-reduced-motion: reduce) {

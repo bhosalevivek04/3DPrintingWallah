@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
+import { siteConfig } from "@/config/site";
+
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
@@ -9,6 +11,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteConfig.url),
   title: {
     default: "3D Printing Wallah — Ideas into objects, layer by layer.",
     template: "%s | 3D Printing Wallah",
@@ -51,7 +54,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={inter.variable} data-scroll-behavior="smooth">
       <body>{children}</body>
     </html>
   );

@@ -3,6 +3,11 @@ import { NavigationConfig } from "@/types/navigation";
 export const navigationConfig: NavigationConfig = {
   mainNav: [
     {
+      title: "Home",
+      href: "/",
+      description: "Return to NewtronLabs homepage",
+    },
+    {
       title: "Shop",
       href: "/shop",
       description: "Browse ready-to-order and personalised 3D printed products",

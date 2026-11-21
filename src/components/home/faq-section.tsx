@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ArrowRight } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
 
@@ -37,16 +37,16 @@ export function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section id="faq" className="w-full bg-[var(--background)] py-20" aria-labelledby="faq-heading">
-      <div className="max-w-[1280px] mx-auto px-6 sm:px-8">
+    <section id="faq" className="w-full bg-[var(--background)] py-20 border-b border-[var(--border)]/70" aria-labelledby="faq-heading">
+      <div className="max-w-[1440px] mx-auto px-4 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-          {/* Left Column: FAQ Introduction (Figma 0:1890) */}
+          {/* Left Column: FAQ Introduction */}
           <div className="lg:col-span-4 flex flex-col gap-6">
             <div className="flex flex-col gap-2">
-              <p className="text-[14px] font-semibold text-[var(--primary)]">
+              <p className="text-[13px] font-bold text-[var(--primary)] uppercase tracking-wider">
                 A few useful answers
               </p>
-              <h2 id="faq-heading" className="text-[32px] font-semibold text-[var(--foreground)] tracking-tight leading-tight">
+              <h2 id="faq-heading" className="text-[32px] font-bold text-[var(--foreground)] tracking-tight leading-tight">
                 Curious about making something?
               </h2>
               <p className="mt-1 text-[16px] text-[var(--muted-foreground)] leading-relaxed">
@@ -57,16 +57,17 @@ export function FAQSection() {
             <div>
               <Link
                 href="/custom/3d-printing"
-                className="inline-flex items-center justify-center rounded-md border border-[var(--border)] bg-white px-5 py-3 text-[14px] font-semibold text-[var(--foreground)] hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors min-h-[44px]"
+                className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-[var(--border)] bg-white px-6 py-3 text-[14px] font-bold text-[var(--foreground)] hover:border-[var(--primary)] hover:text-[var(--primary)] transition-all min-h-[44px] shadow-2xs active:scale-97 cursor-pointer"
               >
-                Contact {siteConfig.name}
+                <span>Contact {siteConfig.name}</span>
+                <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
           </div>
 
-          {/* Right Column: Questions and Answers (Figma 0:1895) */}
+          {/* Right Column: Questions and Answers */}
           <div className="lg:col-span-8 flex flex-col gap-6">
-            <div className="flex flex-col rounded-2xl border border-[var(--border)] bg-white divide-y divide-[var(--border)] overflow-hidden">
+            <div className="flex flex-col rounded-2xl border border-[var(--border)] bg-white divide-y divide-[var(--border)]/70 overflow-hidden shadow-xs">
               {faqs.map((faq, idx) => {
                 const isOpen = openIndex === idx;
                 return (
@@ -75,21 +76,23 @@ export function FAQSection() {
                       type="button"
                       onClick={() => setOpenIndex(isOpen ? null : idx)}
                       aria-expanded={isOpen}
-                      className="flex items-center justify-between p-6 text-left transition-colors hover:bg-[#FAF9F5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
+                      className="flex items-center justify-between p-6 text-left transition-colors hover:bg-stone-50/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] cursor-pointer"
                     >
-                      <span className="text-[16px] font-medium text-[var(--foreground)] pr-4">
+                      <span className="text-[16px] font-semibold text-[var(--foreground)] pr-4">
                         {faq.q}
                       </span>
-                      <ChevronDown
-                        className={cn(
-                          "h-5 w-5 shrink-0 text-[var(--muted-foreground)] transition-transform duration-200",
-                          isOpen && "rotate-180"
-                        )}
-                        aria-hidden="true"
-                      />
+                      <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-colors ${isOpen ? "bg-blue-50 text-[var(--primary)]" : "text-[var(--muted-foreground)]"}`}>
+                        <ChevronDown
+                          className={cn(
+                            "h-4 w-4 transition-transform duration-300 ease-out",
+                            isOpen && "rotate-180"
+                          )}
+                          aria-hidden="true"
+                        />
+                      </div>
                     </button>
                     {isOpen && (
-                      <div className="px-6 pb-6 pt-1 text-[16px] text-[var(--muted-foreground)] leading-relaxed">
+                      <div className="px-6 pb-6 pt-1 text-[15px] text-[var(--muted-foreground)] leading-relaxed animate-in fade-in slide-in-from-top-1 duration-200">
                         {faq.a}
                       </div>
                     )}
@@ -98,9 +101,9 @@ export function FAQSection() {
               })}
             </div>
 
-            {/* Project Guidance Note (Figma 0:1897) */}
-            <div className="rounded-xl border border-[var(--border)] bg-white p-4">
-              <p className="text-[14px] text-[var(--muted-foreground)] leading-relaxed">
+            {/* Project Guidance Note */}
+            <div className="rounded-xl border border-[var(--border)]/80 bg-white/80 p-4 shadow-2xs">
+              <p className="text-[13.5px] text-[var(--muted-foreground)] leading-relaxed">
                 <strong className="font-semibold text-[var(--foreground)]">Helpful to include:</strong> dimensions, intended use, a model or reference, and material or finish preferences.
               </p>
             </div>
