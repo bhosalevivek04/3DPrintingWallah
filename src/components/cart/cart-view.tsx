@@ -51,7 +51,7 @@ export function CartView() {
 
       {/* Empty State */}
       {items.length === 0 ? (
-        <div className="rounded-3xl border border-[var(--border)] bg-stone-50/60 p-8 sm:p-16 text-center max-w-2xl mx-auto flex flex-col items-center gap-5">
+        <div className="rounded-2xl border border-[var(--border)] bg-stone-50/60 p-8 sm:p-16 text-center max-w-2xl mx-auto flex flex-col items-center gap-5">
           <div className="h-16 w-16 rounded-full bg-blue-50 border border-blue-200/70 flex items-center justify-center text-[var(--primary)] shadow-2xs">
             <ShoppingBag className="h-8 w-8 stroke-[1.6]" />
           </div>

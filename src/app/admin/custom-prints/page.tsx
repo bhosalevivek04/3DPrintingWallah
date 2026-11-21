@@ -392,18 +392,18 @@ function CustomPrintsContent() {
             </div>
 
             {/* 4. Action: Create Quotation Draft */}
-            <div className="p-4 rounded-xl border border-indigo-200 bg-indigo-50/50 flex flex-col gap-2.5">
+            <div className="p-4 rounded-xl border border-[var(--color-brand-light)]/40 bg-[var(--color-brand-subtle)] flex flex-col gap-2.5">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-indigo-950">Quotation Generator</span>
-                <span className="text-[10px] text-indigo-700 font-semibold">Ready to draft</span>
+                <span className="text-xs font-bold text-[var(--color-text-primary)]">Quotation Generator</span>
+                <span className="text-[10px] text-[var(--color-brand)] font-semibold">Ready to draft</span>
               </div>
-              <p className="text-[11px] text-indigo-900/80">
+              <p className="text-[11px] text-[var(--color-text-secondary)]">
                 Generate an itemized quotation with custom resin/filament material charges, finishing fees, and delivery.
               </p>
               <button
                 type="button"
                 onClick={handleCreateQuotationDraft}
-                className="w-full py-2.5 rounded-xl bg-indigo-700 text-white text-xs font-bold hover:bg-indigo-800 transition-colors shadow-2xs cursor-pointer flex items-center justify-center gap-1.5"
+                className="w-full py-2.5 rounded-xl bg-[var(--color-brand)] text-white text-xs font-bold hover:bg-[var(--color-brand-hover)] transition-colors shadow-2xs cursor-pointer flex items-center justify-center gap-1.5"
               >
                 <FileText className="h-4 w-4" />
                 <span>Create Quotation Draft &rarr;</span>

@@ -295,7 +295,7 @@ export default function AdminCategoriesPage() {
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-2xs animate-in fade-in">
           <div
-            className="w-full max-w-lg rounded-3xl bg-white border border-[var(--border)] shadow-2xl p-6 flex flex-col gap-5"
+            className="w-full max-w-lg rounded-2xl bg-white border border-[var(--border)] shadow-xl p-6 flex flex-col gap-5"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between pb-3 border-b border-[var(--border)]">

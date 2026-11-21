@@ -71,23 +71,23 @@ export function ProductCard({ product }: ProductCardProps) {
           className="object-cover group-hover:scale-104 transition-transform duration-500 ease-out"
         />
 
-        {/* Badges Overlay with Apple-style Translucent Pills */}
+        {/* Badges Overlay with Apple-style Restrained Pills */}
         <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
           <span
-            className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold shadow-2xs backdrop-blur-xs ${
+            className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold shadow-2xs ${
               stockInfo.badgeVariant === "in_stock"
-                ? "bg-emerald-600/90 text-white"
+                ? "bg-[var(--color-success)] text-white"
                 : stockInfo.badgeVariant === "low_stock"
-                ? "bg-amber-600/90 text-white"
+                ? "bg-[var(--color-warning)] text-white"
                 : stockInfo.badgeVariant === "out_of_stock"
-                ? "bg-rose-600/90 text-white"
-                : "bg-blue-600/90 text-white"
+                ? "bg-[var(--color-danger)] text-white"
+                : "bg-[var(--color-brand)] text-white"
             }`}
           >
             {stockInfo.badgeLabel}
           </span>
           {discountPercent && (
-            <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-500/95 text-white w-max backdrop-blur-xs">
+            <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-[var(--color-warning)] text-white w-max shadow-2xs">
               {discountPercent}% OFF
             </span>
           )}
@@ -100,12 +100,12 @@ export function ProductCard({ product }: ProductCardProps) {
           aria-label={isWishlisted ? `Remove ${product.name} from wishlist` : `Add ${product.name} to wishlist`}
           className={`absolute top-3 right-3 h-8 w-8 rounded-full flex items-center justify-center transition-all z-10 shadow-xs cursor-pointer active:scale-90 ${
             isWishlisted
-              ? "bg-red-50 text-red-600 border border-red-200"
-              : "bg-white/90 backdrop-blur-sm text-stone-600 hover:text-red-600 hover:bg-white"
+              ? "bg-[var(--color-danger-bg)] text-[var(--color-danger)] border border-[var(--color-danger-border)]"
+              : "bg-white/95 text-stone-600 hover:text-[var(--color-danger)] hover:bg-white"
           }`}
         >
           <Heart
-            className={`h-4 w-4 transition-transform duration-200 ${isWishlisted ? "fill-red-600 text-red-600 scale-110" : ""}`}
+            className={`h-4 w-4 transition-transform duration-200 ${isWishlisted ? "fill-[var(--color-danger)] text-[var(--color-danger)] scale-110" : ""}`}
           />
         </button>
       </Link>

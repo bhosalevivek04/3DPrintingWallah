@@ -297,7 +297,7 @@ export function CustomPrintWizard() {
       )}
 
       {/* Step Panels */}
-      <div className="rounded-3xl border border-[var(--border)] bg-white p-6 sm:p-8 shadow-xs">
+      <div className="rounded-2xl border border-[var(--border)] bg-white p-6 sm:p-8 shadow-xs">
         {currentStep === 1 && (
           <StepUpload
             modelFile={modelFile}

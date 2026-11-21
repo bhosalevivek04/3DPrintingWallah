@@ -135,7 +135,7 @@ export default function AdminSettingsPage() {
       </div>
 
       {/* Settings Tab Form */}
-      <form onSubmit={handleSave} className="p-6 rounded-3xl bg-white border border-[var(--border)] shadow-xs flex flex-col gap-6">
+      <form onSubmit={handleSave} className="p-6 rounded-2xl bg-white border border-[var(--border)] shadow-xs flex flex-col gap-6">
         {/* Tab 1: Store & Brand */}
         {activeTab === "store" && (
           <div className="flex flex-col gap-4 text-xs">

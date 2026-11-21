@@ -225,7 +225,7 @@ export default function AdminAnalyticsPage() {
             Quotation Pipeline
           </span>
           <div className="mt-2">
-            <span className="text-3xl font-extrabold text-indigo-700">
+            <span className="text-3xl font-extrabold text-[var(--color-brand)]">
               ₹{totalQuotesValue.toLocaleString("en-IN")}
             </span>
             <span className="text-[11px] text-stone-400 block mt-0.5">{quotations.length} total proposals</span>
@@ -256,7 +256,7 @@ export default function AdminAnalyticsPage() {
       {/* Analytics Breakdown Grid: Status Distribution & Category Performance */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
         {/* Order Status Distribution */}
-        <div className="p-6 rounded-3xl bg-white border border-[var(--border)] shadow-2xs flex flex-col gap-4">
+        <div className="p-6 rounded-2xl bg-white border border-[var(--border)] shadow-2xs flex flex-col gap-4">
           <div className="flex items-center justify-between pb-3 border-b border-[var(--border)]">
             <div className="flex items-center gap-2">
               <PieChart className="h-4 w-4 text-blue-600" />
@@ -291,7 +291,7 @@ export default function AdminAnalyticsPage() {
         </div>
 
         {/* Category Performance */}
-        <div className="p-6 rounded-3xl bg-white border border-[var(--border)] shadow-2xs flex flex-col gap-4">
+        <div className="p-6 rounded-2xl bg-white border border-[var(--border)] shadow-2xs flex flex-col gap-4">
           <div className="flex items-center justify-between pb-3 border-b border-[var(--border)]">
             <div className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4 text-emerald-600" />

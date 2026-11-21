@@ -21,33 +21,10 @@ export function AdminStatusBadge({ status, className = "", size = "md" }: Status
   const s = String(status || "").trim();
   const sizeClasses = size === "sm" ? "px-2 py-0.5 text-[10px]" : "px-2.5 py-1 text-xs";
 
-  let colorClasses = "bg-stone-100 text-stone-700 border-stone-200";
+  let colorClasses = "bg-[var(--color-surface-muted)] text-[var(--color-text-secondary)] border-[var(--color-border)]";
 
-  // Order & Process Statuses
+  // Success: Green
   if (
-    s === "Request Submitted" ||
-    s === "submitted" ||
-    s === "New" ||
-    s === "Order Placed"
-  ) {
-    colorClasses = "bg-sky-50 text-sky-700 border-sky-200";
-  } else if (
-    s === "Under Review" ||
-    s === "Under Workshop Review" ||
-    s === "under_review" ||
-    s === "In Progress" ||
-    s === "Ready for Review"
-  ) {
-    colorClasses = "bg-amber-50 text-amber-700 border-amber-200";
-  } else if (
-    s === "Awaiting Customer Confirmation" ||
-    s === "Quotation Sent" ||
-    s === "quotation_sent" ||
-    s === "Sent" ||
-    s === "Awaiting Payment"
-  ) {
-    colorClasses = "bg-indigo-50 text-indigo-700 border-indigo-200";
-  } else if (
     s === "Payment Confirmed" ||
     s === "Confirmed & Payment Arranged" ||
     s === "Accepted" ||
@@ -58,8 +35,49 @@ export function AdminStatusBadge({ status, className = "", size = "md" }: Status
     s === "Completed" ||
     s === "Resolved"
   ) {
-    colorClasses = "bg-emerald-50 text-emerald-700 border-emerald-200";
-  } else if (
+    colorClasses = "bg-[var(--color-success-bg)] text-[var(--color-success)] border-[var(--color-success-border)]";
+  }
+  // Warning / Attention: Amber
+  else if (
+    s === "Under Review" ||
+    s === "Under Workshop Review" ||
+    s === "under_review" ||
+    s === "In Progress" ||
+    s === "Ready for Review" ||
+    s === "Awaiting Customer Confirmation" ||
+    s === "Quotation Sent" ||
+    s === "quotation_sent" ||
+    s === "Sent" ||
+    s === "Awaiting Payment" ||
+    s === "low_stock" ||
+    s === "Low Stock" ||
+    s === "made_to_order" ||
+    s === "Made to Order" ||
+    s === "requires_info" ||
+    s === "Partially Paid" ||
+    s === "Delayed"
+  ) {
+    colorClasses = "bg-[var(--color-warning-bg)] text-[var(--color-warning)] border-[var(--color-warning-border)]";
+  }
+  // Danger / Terminated: Red
+  else if (
+    s === "out_of_stock" ||
+    s === "Out of Stock" ||
+    s === "Cancelled" ||
+    s === "cancelled" ||
+    s === "Rejected" ||
+    s === "Expired" ||
+    s === "Unpaid" ||
+    s === "Refunded"
+  ) {
+    colorClasses = "bg-[var(--color-danger-bg)] text-[var(--color-danger)] border-[var(--color-danger-border)]";
+  }
+  // Info / Active Lifecycle: Brand Blue
+  else if (
+    s === "Request Submitted" ||
+    s === "submitted" ||
+    s === "New" ||
+    s === "Order Placed" ||
     s === "Processing / In Production" ||
     s === "In Production" ||
     s === "in_production" ||
@@ -70,28 +88,7 @@ export function AdminStatusBadge({ status, className = "", size = "md" }: Status
     s === "In Transit" ||
     s === "Out for Delivery"
   ) {
-    colorClasses = "bg-blue-50 text-blue-700 border-blue-200";
-  } else if (
-    s === "low_stock" ||
-    s === "Low Stock" ||
-    s === "made_to_order" ||
-    s === "Made to Order" ||
-    s === "requires_info" ||
-    s === "Partially Paid" ||
-    s === "Delayed"
-  ) {
-    colorClasses = "bg-orange-50 text-orange-700 border-orange-200";
-  } else if (
-    s === "out_of_stock" ||
-    s === "Out of Stock" ||
-    s === "Cancelled" ||
-    s === "cancelled" ||
-    s === "Rejected" ||
-    s === "Expired" ||
-    s === "Unpaid" ||
-    s === "Refunded"
-  ) {
-    colorClasses = "bg-rose-50 text-rose-700 border-rose-200";
+    colorClasses = "bg-[var(--color-info-bg)] text-[var(--color-info)] border-[var(--color-info-border)]";
   }
 
   return (

@@ -47,12 +47,12 @@ export function ContactForm() {
 
   if (success) {
     return (
-      <div className="rounded-2xl border border-emerald-200 bg-emerald-50/80 p-6 sm:p-8 text-center flex flex-col items-center gap-3 animate-in fade-in">
-        <div className="h-12 w-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
+      <div className="rounded-2xl border border-[var(--color-success-border)] bg-[var(--color-success-bg)] p-6 sm:p-8 text-center flex flex-col items-center gap-3 animate-in fade-in">
+        <div className="h-12 w-12 rounded-full bg-white border border-[var(--color-success-border)] text-[var(--color-success)] flex items-center justify-center shadow-2xs">
           <CheckCircle2 className="h-6 w-6 stroke-[2]" />
         </div>
-        <h3 className="text-lg font-bold text-emerald-950">Message Sent to Workshop</h3>
-        <p className="text-xs sm:text-sm text-emerald-800 max-w-md">
+        <h3 className="text-lg font-bold text-[var(--color-text-primary)]">Message Sent to Workshop</h3>
+        <p className="text-xs sm:text-sm text-[var(--color-text-secondary)] max-w-md">
           Thank you, <strong className="font-semibold">{formData.name}</strong>. Our workshop team has received your message regarding &quot;{formData.subject}&quot; and will get back to you at <strong className="font-semibold">{formData.email}</strong> within 24 hours.
         </p>
         <button
@@ -67,7 +67,7 @@ export function ContactForm() {
               message: "",
             });
           }}
-          className="mt-2 text-xs font-bold text-emerald-700 hover:underline cursor-pointer"
+          className="mt-2 text-xs font-bold text-[var(--color-brand)] hover:underline cursor-pointer"
         >
           Send another message
         </button>
@@ -82,8 +82,8 @@ export function ContactForm() {
       </h3>
 
       {error && (
-        <div className="p-3.5 rounded-xl border border-rose-200 bg-rose-50 text-xs text-rose-900 flex items-center gap-2">
-          <AlertCircle className="h-4 w-4 text-rose-600 shrink-0" />
+        <div className="p-3.5 rounded-xl border border-[var(--color-danger-border)] bg-[var(--color-danger-bg)] text-xs text-[var(--color-danger)] flex items-center gap-2">
+          <AlertCircle className="h-4 w-4 text-[var(--color-danger)] shrink-0" />
           <span>{error}</span>
         </div>
       )}

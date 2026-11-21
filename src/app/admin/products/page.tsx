@@ -503,7 +503,7 @@ export default function AdminProductsPage() {
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-2xs animate-in fade-in">
           <div
-            className="w-full max-w-2xl max-h-[90vh] rounded-3xl bg-white border border-[var(--border)] shadow-2xl overflow-y-auto p-6 flex flex-col gap-6"
+            className="w-full max-w-2xl max-h-[90vh] rounded-2xl bg-white border border-[var(--border)] shadow-xl overflow-y-auto p-6 flex flex-col gap-6"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}

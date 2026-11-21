@@ -111,17 +111,17 @@ export default function CustomPrintingPage() {
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[
-              { name: "PLA / PLA+", note: "Best for general prototypes & decorative pieces", color: "bg-blue-50" },
-              { name: "PETG", note: "Durable, high impact & heat-resistant (up to 75°C)", color: "bg-green-50" },
-              { name: "TPU (Flexible)", note: "Flexible, rubbery, shock absorbing parts", color: "bg-orange-50" },
-              { name: "Resin (SLA)", note: "Ultra-high detail & smooth miniature surface", color: "bg-purple-50" },
+              { name: "PLA / PLA+", note: "Best for general prototypes & decorative pieces" },
+              { name: "PETG", note: "Durable, high impact & heat-resistant (up to 75°C)" },
+              { name: "TPU (Flexible)", note: "Flexible, rubbery, shock absorbing parts" },
+              { name: "Resin (SLA)", note: "Ultra-high detail & smooth miniature surface" },
             ].map((m) => (
               <div
                 key={m.name}
-                className={`rounded-xl ${m.color} border border-[var(--border)] p-4`}
+                className="rounded-xl bg-white border border-[var(--color-border)] p-4 shadow-2xs hover:border-[var(--color-brand)] transition-colors"
               >
-                <p className="text-sm font-bold text-[var(--foreground)]">{m.name}</p>
-                <p className="text-xs text-[var(--muted-foreground)] mt-1">{m.note}</p>
+                <p className="text-sm font-bold text-[var(--color-text-primary)]">{m.name}</p>
+                <p className="text-xs text-[var(--color-text-secondary)] mt-1">{m.note}</p>
               </div>
             ))}
           </div>

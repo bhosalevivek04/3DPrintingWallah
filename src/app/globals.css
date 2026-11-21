@@ -2,24 +2,82 @@
 
 /* ─── Design Tokens (exact Figma values from NewtronLabs / 01 — Storefront) ─── */
 :root {
-  --background: #F7F6F2;
-  --foreground: #1D2B39;
-  --card: #FFFFFF;
-  --card-foreground: #1D2B39;
-  --primary: #175CD3;
-  --primary-hover: #124AA9;
-  --primary-light: #53B1FD;
-  --border: #D7DDE2;
-  --muted: #EDF4FF;
-  --muted-foreground: #526170;
-  --accent: #EDF4FF;
-  --accent-foreground: #175CD3;
-  --brand-inverse: #142333;
-  --brand-inverse-border: #233547;
+  /* Core Palette */
+  --color-background: #F7F6F2;
+  --color-surface: #FFFFFF;
+  --color-surface-muted: #F2F4F7;
+  --color-surface-inverse: #142333;
+  --color-surface-card: #FFFFFF;
+
+  /* Typography */
+  --color-text-primary: #1D2B39;
+  --color-text-secondary: #526170;
+  --color-text-muted: #8B99A8;
+  --color-text-inverse: #FFFFFF;
+
+  /* Borders & Dividers */
+  --color-border: #D7DDE2;
+  --color-border-subtle: #E8ECEF;
+  --color-border-inverse: #233547;
+  --color-border-focus: #175CD3;
+
+  /* Brand Accent */
+  --color-brand: #175CD3;
+  --color-brand-hover: #124AA9;
+  --color-brand-light: #53B1FD;
+  --color-brand-subtle: #EDF4FF;
+  --color-brand-foreground: #FFFFFF;
+
+  /* Functional Status Tokens (Green, Amber, Red, Blue) */
+  --color-success: #027A48;
+  --color-success-bg: #ECFDF3;
+  --color-success-border: #A6F4C5;
+  --color-success-foreground: #FFFFFF;
+
+  --color-warning: #B54708;
+  --color-warning-bg: #FFFAEB;
+  --color-warning-border: #FEDF89;
+  --color-warning-foreground: #FFFFFF;
+
+  --color-danger: #B42318;
+  --color-danger-bg: #FEF3F2;
+  --color-danger-border: #FECDCA;
+  --color-danger-hover: #912018;
+  --color-danger-foreground: #FFFFFF;
+
+  --color-info: #175CD3;
+  --color-info-bg: #EFF8FF;
+  --color-info-border: #B2DDFF;
+  --color-info-foreground: #FFFFFF;
+
+  /* Backward Compatibility Aliases */
+  --background: var(--color-background);
+  --foreground: var(--color-text-primary);
+  --card: var(--color-surface);
+  --card-foreground: var(--color-text-primary);
+  --primary: var(--color-brand);
+  --primary-hover: var(--color-brand-hover);
+  --primary-light: var(--color-brand-light);
+  --border: var(--color-border);
+  --muted: var(--color-brand-subtle);
+  --muted-foreground: var(--color-text-secondary);
+  --accent: var(--color-brand-subtle);
+  --accent-foreground: var(--color-brand);
+  --brand-inverse: var(--color-surface-inverse);
+  --brand-inverse-border: var(--color-border-inverse);
   --on-inverse: #FFFFFF;
   --on-inverse-muted: #8B99A8;
 
-  /* ─── Motion & Easing Tokens (Emil Kowalski / Apple Design Philosophy) ─── */
+  --success: var(--color-success);
+  --success-subtle: var(--color-success-bg);
+  --warning: var(--color-warning);
+  --warning-subtle: var(--color-warning-bg);
+  --danger: var(--color-danger);
+  --danger-subtle: var(--color-danger-bg);
+  --info: var(--color-info);
+  --info-subtle: var(--color-info-bg);
+
+  /* ─── Motion & Easing Tokens (Apple Design Philosophy) ─── */
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
   --ease-spring: cubic-bezier(0.32, 0.72, 0, 1);
@@ -27,30 +85,52 @@
   --duration-normal: 250ms;
   --duration-slow: 400ms;
 
-  /* ─── Apple-inspired Layered Shadows ─── */
+  /* ─── Layered Restrained Shadows ─── */
   --shadow-subtle: 0 1px 2px rgba(29, 43, 57, 0.04), 0 2px 4px rgba(29, 43, 57, 0.02);
   --shadow-card: 0 2px 4px rgba(29, 43, 57, 0.03), 0 8px 16px -2px rgba(29, 43, 57, 0.04);
   --shadow-hover: 0 4px 8px rgba(29, 43, 57, 0.04), 0 16px 32px -4px rgba(29, 43, 57, 0.08);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-primary: var(--primary);
-  --color-primary-hover: var(--primary-hover);
-  --color-border: var(--border);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
+  --color-background: var(--color-background);
+  --color-surface: var(--color-surface);
+  --color-surface-muted: var(--color-surface-muted);
+  --color-foreground: var(--color-text-primary);
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-muted: var(--color-text-muted);
+  --color-card: var(--color-surface);
+  --color-card-foreground: var(--color-text-primary);
+  --color-border: var(--color-border);
+  --color-border-subtle: var(--color-border-subtle);
+  --color-brand: var(--color-brand);
+  --color-brand-hover: var(--color-brand-hover);
+  --color-brand-light: var(--color-brand-light);
+  --color-brand-subtle: var(--color-brand-subtle);
+  --color-primary: var(--color-brand);
+  --color-primary-hover: var(--color-brand-hover);
+  --color-muted: var(--color-brand-subtle);
+  --color-muted-foreground: var(--color-text-secondary);
+  --color-accent: var(--color-brand-subtle);
+  --color-accent-foreground: var(--color-brand);
+  --color-success: var(--color-success);
+  --color-success-bg: var(--color-success-bg);
+  --color-success-border: var(--color-success-border);
+  --color-warning: var(--color-warning);
+  --color-warning-bg: var(--color-warning-bg);
+  --color-warning-border: var(--color-warning-border);
+  --color-danger: var(--color-danger);
+  --color-danger-bg: var(--color-danger-bg);
+  --color-danger-border: var(--color-danger-border);
+  --color-info: var(--color-info);
+  --color-info-bg: var(--color-info-bg);
+  --color-info-border: var(--color-info-border);
   --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 @layer base {
   * {
-    border-color: var(--border);
+    border-color: var(--color-border);
   }
 
   html {
@@ -60,8 +140,8 @@
   }
 
   body {
-    background-color: var(--background);
-    color: var(--foreground);
+    background-color: var(--color-background);
+    color: var(--color-text-primary);
     font-family: var(--font-sans);
     font-size: 1rem;
     line-height: 1.5rem;
@@ -85,21 +165,21 @@
   button:active,
   a.btn-interactive:active,
   [role="button"]:active {
-    transform: scale(0.97);
+    transform: scale(0.98);
     transition: transform var(--duration-fast) var(--ease-out);
   }
 
   :focus-visible {
-    outline: 2px solid var(--primary);
+    outline: 2px solid var(--color-brand);
     outline-offset: 2px;
   }
 }
 
 /* ─── Apple-Style Micro-Interactions & Surfaces ─── */
 .glass-header {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.90);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .apple-card {

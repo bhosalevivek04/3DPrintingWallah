@@ -16,7 +16,7 @@ export function CustomPrintingSection() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left Column: Print in progress with subtle ambient depth */}
           <div className="flex flex-col gap-3 max-w-[608px] w-full">
-            <div className="relative aspect-[608/456] w-full overflow-hidden rounded-2xl bg-[#0B1521] border border-[var(--brand-inverse-border)] shadow-2xl group">
+            <div className="relative aspect-[608/456] w-full overflow-hidden rounded-2xl bg-[#0B1521] border border-[var(--brand-inverse-border)] shadow-xl group">
               <Image
                 src="/images/custom-print-progress.webp"
                 alt="3D print in progress showing high-precision FDM layers"

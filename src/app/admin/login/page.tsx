@@ -23,7 +23,7 @@ export default function AdminLoginPage() {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center p-4">
-      <div className="w-full max-w-md rounded-3xl bg-white border border-[var(--border)] shadow-xl p-8 flex flex-col gap-6">
+      <div className="w-full max-w-md rounded-2xl bg-white border border-[var(--border)] shadow-lg p-8 flex flex-col gap-6">
         {/* Brand */}
         <div className="flex flex-col items-center text-center gap-2">
           <div className="h-12 w-12 rounded-2xl bg-[var(--primary)] text-white flex items-center justify-center font-bold text-base shadow-sm">

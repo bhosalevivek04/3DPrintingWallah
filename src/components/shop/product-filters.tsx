@@ -185,7 +185,7 @@ export function MobileFilterDrawer({
         role="dialog"
         aria-modal="true"
         aria-label="Filter products"
-        className="relative z-10 w-full max-w-xs bg-white h-full shadow-2xl flex flex-col p-6 overflow-y-auto"
+        className="relative z-10 w-full max-w-xs bg-white h-full shadow-xl flex flex-col p-6 overflow-y-auto"
       >
         <div className="flex items-center justify-between pb-4 border-b border-[var(--border)]">
           <div className="flex items-center gap-2">

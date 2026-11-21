@@ -167,7 +167,7 @@ export function CheckoutView() {
           ]}
         />
 
-        <div className="rounded-3xl border border-emerald-200 bg-white p-6 sm:p-10 shadow-sm flex flex-col gap-8">
+        <div className="rounded-2xl border border-[var(--color-success-border)] bg-white p-6 sm:p-10 shadow-xs flex flex-col gap-8">
           {/* Header */}
           <div className="flex flex-col items-center text-center gap-3">
             <div className="h-16 w-16 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 shadow-2xs">

@@ -348,7 +348,7 @@ function QuotationsContent() {
                             type="button"
                             onClick={() => handleUpdateStatus(quote.id, "Sent")}
                             title="Simulate Sending to Customer Email"
-                            className="p-1 rounded-lg text-indigo-600 hover:bg-indigo-50"
+                            className="p-1 rounded-lg text-[var(--color-brand)] hover:bg-[var(--color-brand-subtle)]"
                           >
                             <Send className="h-3.5 w-3.5" />
                           </button>
@@ -382,7 +382,7 @@ function QuotationsContent() {
       {previewQuotation && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-2xs animate-in fade-in">
           <div
-            className="w-full max-w-2xl max-h-[90vh] rounded-3xl bg-white border border-[var(--border)] shadow-2xl p-6 sm:p-8 overflow-y-auto flex flex-col gap-6"
+            className="w-full max-w-2xl max-h-[90vh] rounded-2xl bg-white border border-[var(--border)] shadow-xl p-6 sm:p-8 overflow-y-auto flex flex-col gap-6"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Action Bar */}
@@ -543,7 +543,7 @@ function QuotationsContent() {
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-2xs animate-in fade-in">
           <div
-            className="w-full max-w-2xl max-h-[90vh] rounded-3xl bg-white border border-[var(--border)] shadow-2xl p-6 overflow-y-auto flex flex-col gap-5"
+            className="w-full max-w-2xl max-h-[90vh] rounded-2xl bg-white border border-[var(--border)] shadow-xl p-6 overflow-y-auto flex flex-col gap-5"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between pb-3 border-b border-[var(--border)]">

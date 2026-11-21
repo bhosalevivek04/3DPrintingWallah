@@ -75,7 +75,7 @@ export function AdminSearchModal({ isOpen, onClose }: AdminSearchModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 px-4 bg-black/40 backdrop-blur-xs animate-in fade-in">
       <div
-        className="w-full max-w-lg rounded-2xl bg-white border border-[var(--border)] shadow-2xl overflow-hidden flex flex-col"
+        className="w-full max-w-lg rounded-2xl bg-white border border-[var(--border)] shadow-xl overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Search Input */}

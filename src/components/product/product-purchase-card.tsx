@@ -230,33 +230,33 @@ export function ProductPurchaseCard({ product }: ProductPurchaseCardProps) {
       <div
         className={`p-4 rounded-xl border transition-all ${
           stockInfo.status === "in_stock"
-            ? "bg-emerald-50/70 border-emerald-200 text-emerald-950"
+            ? "bg-[var(--color-success-bg)] border-[var(--color-success-border)] text-[var(--color-success)]"
             : stockInfo.status === "low_stock"
-            ? "bg-amber-50/80 border-amber-200 text-amber-950"
+            ? "bg-[var(--color-warning-bg)] border-[var(--color-warning-border)] text-[var(--color-warning)]"
             : stockInfo.status === "out_of_stock"
-            ? "bg-rose-50/80 border-rose-200 text-rose-950"
-            : "bg-blue-50/70 border-blue-200 text-blue-950"
+            ? "bg-[var(--color-danger-bg)] border-[var(--color-danger-border)] text-[var(--color-danger)]"
+            : "bg-[var(--color-info-bg)] border-[var(--color-info-border)] text-[var(--color-info)]"
         }`}
       >
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-start gap-3">
             <span
-              className={`h-3 w-3 rounded-full mt-1 shrink-0 ${
+              className={`h-2.5 w-2.5 rounded-full mt-1 shrink-0 ${
                 stockInfo.status === "in_stock"
-                  ? "bg-emerald-500 ring-4 ring-emerald-100"
+                  ? "bg-[var(--color-success)]"
                   : stockInfo.status === "low_stock"
-                  ? "bg-amber-500 ring-4 ring-amber-100 animate-pulse"
+                  ? "bg-[var(--color-warning)] animate-pulse"
                   : stockInfo.status === "out_of_stock"
-                  ? "bg-rose-500 ring-4 ring-rose-100"
-                  : "bg-blue-500 ring-4 ring-blue-100"
+                  ? "bg-[var(--color-danger)]"
+                  : "bg-[var(--color-info)]"
               }`}
             />
             <div className="flex flex-col">
-              <span className="font-bold text-sm tracking-tight">
+              <span className="font-bold text-sm tracking-tight text-[var(--color-text-primary)]">
                 {stockInfo.detailLabel}
               </span>
               {stockInfo.detailSubtext && (
-                <span className="text-xs text-[var(--muted-foreground)] mt-0.5">
+                <span className="text-xs text-[var(--color-text-secondary)] mt-0.5">
                   {stockInfo.detailSubtext}
                 </span>
               )}
@@ -264,8 +264,8 @@ export function ProductPurchaseCard({ product }: ProductPurchaseCardProps) {
           </div>
 
           {stockInfo.showLowStockWarning && stockInfo.remainingCount !== null && (
-            <span className="text-xs font-bold px-2 py-0.5 rounded-md bg-amber-100 text-amber-900 border border-amber-300 shrink-0">
-              ⚡ High Demand
+            <span className="text-xs font-bold px-2 py-0.5 rounded-md bg-[var(--color-warning-bg)] text-[var(--color-warning)] border border-[var(--color-warning-border)] shrink-0">
+              Low Stock
             </span>
           )}
         </div>

@@ -31,7 +31,7 @@ export function CustomModelPreview({ modelFile, className = "" }: CustomModelPre
 
   return (
     <div
-      className={`relative flex flex-col rounded-2xl border border-[var(--border)] bg-gradient-to-b from-stone-900 to-stone-950 text-white overflow-hidden shadow-md select-none ${className}`}
+      className={`relative flex flex-col rounded-2xl border border-[var(--color-border-inverse)] bg-[var(--color-surface-inverse)] text-white overflow-hidden shadow-sm select-none ${className}`}
       aria-label="3D Model Preview Viewport"
     >
       {/* Top Bar: Viewport Status & Format Badge */}
@@ -101,7 +101,7 @@ export function CustomModelPreview({ modelFile, className = "" }: CustomModelPre
           /* When a model is selected */
           <div className="relative z-10 flex flex-col items-center text-center max-w-sm px-4">
             {/* Visual 3D Hologram / Placeholder Frame */}
-            <div className="relative mb-5 flex h-24 w-24 items-center justify-center rounded-2xl bg-gradient-to-tr from-stone-800 via-stone-700 to-stone-800 border border-stone-600 shadow-2xl">
+            <div className="relative mb-5 flex h-24 w-24 items-center justify-center rounded-2xl bg-[#142333] border border-stone-700 shadow-md">
               <Box className="h-12 w-12 text-stone-200" strokeWidth={1.5} />
               <div className="absolute -inset-1 rounded-2xl border border-[var(--primary)]/30 animate-pulse pointer-events-none" />
             </div>

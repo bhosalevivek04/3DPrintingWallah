@@ -179,16 +179,16 @@ export default function AdminDashboardPage() {
         {/* Metric 4: In Production */}
         <div className="p-4 sm:p-5 rounded-2xl bg-white border border-[var(--border)] shadow-2xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-indigo-700">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--color-info)]">
               In Production
             </span>
-            <div className="h-7 w-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+            <div className="h-7 w-7 rounded-lg bg-[var(--color-info-bg)] text-[var(--color-info)] flex items-center justify-center">
               <Layers className="h-3.5 w-3.5" />
             </div>
           </div>
           <div className="mt-2.5">
-            <span className="text-2xl sm:text-3xl font-extrabold text-indigo-700">{inProduction}</span>
-            <span className="text-[11px] text-indigo-600/80 block mt-0.5">On printer beds</span>
+            <span className="text-2xl sm:text-3xl font-extrabold text-[var(--color-info)]">{inProduction}</span>
+            <span className="text-[11px] text-[var(--color-text-secondary)] block mt-0.5">On printer beds</span>
           </div>
         </div>
 
@@ -308,7 +308,7 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Revenue vs. Proposed Quotations Comparison Card */}
-      <div className="p-6 rounded-3xl bg-white border border-[var(--border)] shadow-xs">
+      <div className="p-6 rounded-2xl bg-white border border-[var(--border)] shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-[var(--border)]">
           <div>
             <div className="flex items-center gap-2">
@@ -357,26 +357,26 @@ export default function AdminDashboardPage() {
           </div>
 
           {/* Proposed Quotations / Pipeline */}
-          <div className="p-5 rounded-2xl bg-indigo-50/60 border border-indigo-200/80 flex flex-col justify-between">
+          <div className="p-5 rounded-2xl bg-[var(--color-info-bg)] border border-[var(--color-info-border)] flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-wider text-indigo-800">
+                <span className="text-xs font-bold uppercase tracking-wider text-[var(--color-info)]">
                   Proposed Quotations (Pipeline)
                 </span>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-200/60 text-indigo-900">
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-[var(--color-brand)]">
                   Unsettled Enquiries
                 </span>
               </div>
               <div className="mt-3">
-                <span className="text-3xl sm:text-4xl font-extrabold text-indigo-900 tracking-tight">
+                <span className="text-3xl sm:text-4xl font-extrabold text-[var(--foreground)] tracking-tight">
                   ₹{totalQuotationValue.toLocaleString("en-IN")}
                 </span>
-                <p className="text-xs text-indigo-800/90 mt-1">
+                <p className="text-xs text-[var(--color-text-secondary)] mt-1">
                   Proposed across {quotations.length} custom quotes and corporate enquiries currently pending acceptance.
                 </p>
               </div>
             </div>
-            <div className="mt-4 pt-3 border-t border-indigo-200 text-[11px] text-indigo-700 flex items-center justify-between">
+            <div className="mt-4 pt-3 border-t border-[var(--color-info-border)] text-[11px] text-[var(--color-info)] flex items-center justify-between">
               <span>Not counted as recognized revenue</span>
               <Link href="/admin/quotations" className="font-bold hover:underline flex items-center gap-1">
                 <span>Manage Quotations</span>

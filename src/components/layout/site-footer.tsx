@@ -46,7 +46,7 @@ export function SiteFooter() {
               Custom 3D printing, personal touches and everyday possibilities.
             </p>
             <Link
-              href="/custom/3d-printing"
+              href="/contact"
               className="mt-2 text-[16px] font-medium text-[#53B1FD] hover:underline"
             >
               {siteConfig.contact.contactText}
@@ -134,7 +134,7 @@ export function SiteFooter() {
                   className="hover:text-white transition-colors inline-flex items-center gap-2 group"
                 >
                   <svg
-                    className="h-4 w-4 fill-none stroke-current stroke-2 text-[#8B99A8] group-hover:text-pink-400 transition-colors"
+                    className="h-4 w-4 fill-none stroke-current stroke-2 text-[#8B99A8] group-hover:text-white transition-colors"
                     viewBox="0 0 24 24"
                     strokeLinecap="round"
                     strokeLinejoin="round"

@@ -52,7 +52,7 @@ export function MobileNavigation() {
           />
           {/* Drawer panel */}
           <nav
-            className="fixed inset-y-0 right-0 z-50 w-80 max-w-full bg-[var(--background)] shadow-2xl flex flex-col lg:hidden border-l border-[var(--border)] animate-in slide-in-from-right duration-200"
+            className="fixed inset-y-0 right-0 z-50 w-80 max-w-full bg-[var(--background)] shadow-xl flex flex-col lg:hidden border-l border-[var(--border)] animate-in slide-in-from-right duration-200"
             aria-label="Mobile navigation"
           >
             <div className="flex items-center justify-between border-b border-[var(--border)] px-6 py-4">

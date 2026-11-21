@@ -38,12 +38,12 @@ export function SubmissionConfirmation({ request, onReset }: SubmissionConfirmat
   return (
     <div className="flex flex-col gap-6 py-4 animate-in fade-in duration-300">
       {/* Top Success Banner */}
-      <div className="flex flex-col items-center text-center p-8 rounded-2xl bg-gradient-to-b from-emerald-50/70 to-white border border-emerald-200">
-        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-600 text-white shadow-lg mb-4">
-          <CheckCircle2 className="h-9 w-9" />
+      <div className="flex flex-col items-center text-center p-8 rounded-2xl bg-white border border-[var(--color-border)] shadow-xs">
+        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--color-success-bg)] text-[var(--color-success)] border border-[var(--color-success-border)] shadow-2xs mb-4">
+          <CheckCircle2 className="h-7 w-7" />
         </div>
 
-        <span className="text-xs font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100/80 px-3 py-1 rounded-full mb-2">
+        <span className="text-xs font-bold uppercase tracking-wider text-[var(--color-success)] bg-[var(--color-success-bg)] border border-[var(--color-success-border)] px-3 py-1 rounded-full mb-2">
           Request Submitted
         </span>
 
