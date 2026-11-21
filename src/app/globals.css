@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+/* ─── Design Tokens (exact Figma values from NewtronLabs / 01 — Storefront) ─── */
+:root {
+  --background: #F7F6F2;
+  --foreground: #1D2B39;
+  --card: #FFFFFF;
+  --card-foreground: #1D2B39;
+  --primary: #175CD3;
+  --primary-hover: #124AA9;
+  --primary-light: #53B1FD;
+  --border: #D7DDE2;
+  --muted: #EDF4FF;
+  --muted-foreground: #526170;
+  --accent: #EDF4FF;
+  --accent-foreground: #175CD3;
+  --brand-inverse: #142333;
+  --brand-inverse-border: #233547;
+  --on-inverse: #FFFFFF;
+  --on-inverse-muted: #8B99A8;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.5rem;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
