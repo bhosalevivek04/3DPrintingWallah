@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
+import { HeroProductCarousel } from "@/components/home/hero-product-carousel";
 
 export function HeroSection() {
   return (
@@ -46,23 +46,8 @@ export function HeroSection() {
             </p>
           </div>
 
-          {/* Right Column: Workshop Still Life (Figma 0:1790) */}
-          <div className="flex flex-col gap-3 max-w-[608px] w-full">
-            <div className="relative aspect-[608/456] w-full overflow-hidden rounded-2xl bg-stone-100 shadow-sm border border-[var(--border)]">
-              <Image
-                src="/images/hero-workshop.webp"
-                alt="Workshop still life with 3D printed blue ribbed planter and desktop accessories"
-                fill
-                priority
-                sizes="(max-width: 1024px) 100vw, 608px"
-                className="object-cover"
-              />
-            </div>
-            <div className="flex items-center justify-between text-[14px] text-[var(--muted-foreground)] px-1">
-              <span>Everyday objects, made layer by layer.</span>
-              <span>Concept render</span>
-            </div>
-          </div>
+          {/* Right Column: Hero Product Showcase Carousel */}
+          <HeroProductCarousel />
         </div>
       </div>
     </section>
