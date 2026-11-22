@@ -1,0 +1,24 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "newtronlabs-storefront",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-11-20",
+  "compatibility_flags": [
+    "nodejs_compat",
+    "global_fetch_strictly_public"
+  ],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "vars": {
+    "NODE_ENV": "production",
+    "NEXT_PUBLIC_APP_URL": "https://3dprintingwallah.com"
+  },
+  "r2_buckets": [
+    {
+      "binding": "R2_MODELS_BUCKET",
+      "bucket_name": "newtronlabs-models-private"
+    }
+  ]
+}
