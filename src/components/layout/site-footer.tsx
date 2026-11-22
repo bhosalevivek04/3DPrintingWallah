@@ -18,7 +18,7 @@ export function SiteFooter() {
             </p>
           </div>
           <Link
-            href="/custom/3d-printing"
+            href="/contact"
             className="shrink-0 inline-flex items-center justify-center rounded-md bg-[var(--primary)] px-6 py-3.5 text-[14px] font-semibold text-white hover:bg-[var(--primary-hover)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white min-h-[44px]"
           >
             Start a conversation

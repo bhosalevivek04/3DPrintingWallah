@@ -12,8 +12,8 @@ interface ShopHeaderProps {
 }
 
 export function ShopHeader({
-  totalCount,
-  filteredCount,
+  totalCount: _totalCount,
+  filteredCount: _filteredCount,
   searchQuery,
   onSearchChange,
   onClearSearch,
@@ -22,18 +22,7 @@ export function ShopHeader({
     <div className="flex flex-col gap-6 pb-6 border-b border-[var(--border)]">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <div className="flex items-center gap-3">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[var(--primary)] bg-[var(--muted)] px-2.5 py-1 rounded-md">
-              Store Catalogue
-            </span>
-            <span className="text-xs text-[var(--muted-foreground)]">
-              {filteredCount === totalCount
-                ? `${totalCount} products available`
-                : `Showing ${filteredCount} of ${totalCount} products`}
-            </span>
-          </div>
-
-          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-[var(--foreground)] mt-2">
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-[var(--foreground)]">
             Explore Our 3D Creations
           </h1>
           <p className="text-base text-[var(--muted-foreground)] mt-1.5 max-w-2xl leading-relaxed">

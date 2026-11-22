@@ -1,0 +1,623 @@
+# Database Schema Proposal: Complete Relational Data Model
+
+**Project:** NewtronLabs / 3D Printing Wallah  
+**Database Engine:** PostgreSQL 16 (Neon Serverless)  
+**ORM:** Prisma ORM with `@prisma/adapter-neon`  
+**Status:** Complete Schema Specification  
+
+---
+
+## 1. Entity Relationship Diagram
+
+```mermaid
+erDiagram
+    ADMIN_USER ||--o{ AUDIT_LOG : generates
+    ADMIN_USER ||--o{ ORDER_INTERNAL_NOTE : writes
+    ADMIN_USER ||--o{ STOCK_ADJUSTMENT_LOG : records
+
+    CUSTOMER ||--o{ ORDER_REQUEST : submits
+    CUSTOMER ||--o{ CUSTOM_PRINT_REQUEST : submits
+    CUSTOMER ||--o{ PRODUCT_REVIEW : writes
+    CUSTOMER ||--o{ QUOTATION : receives
+
+    CATEGORY ||--o{ PRODUCT : contains
+
+    PRODUCT ||--o{ PRODUCT_IMAGE : has
+    PRODUCT ||--o{ PRODUCT_SPECIFICATION : defines
+    PRODUCT ||--o{ ORDER_REQUEST_ITEM : ordered_as
+    PRODUCT ||--o{ STOCK_ADJUSTMENT_LOG : audited_by
+    PRODUCT ||--o{ PRODUCT_REVIEW : receives
+
+    ORDER_REQUEST ||--|{ ORDER_REQUEST_ITEM : includes
+    ORDER_REQUEST ||--o{ ORDER_STATUS_HISTORY : tracks
+    ORDER_REQUEST ||--o{ ORDER_INTERNAL_NOTE : contains
+    ORDER_REQUEST ||--o| SHIPPING_TRACKING : dispatches
+    ORDER_REQUEST ||--o| QUOTATION : generates
+    ORDER_REQUEST ||--o{ PAYMENT : records
+
+    CUSTOM_PRINT_REQUEST ||--|{ MODEL_FILE : uploads
+    CUSTOM_PRINT_REQUEST ||--|| CUSTOM_PRINT_REQUIREMENT : specifies
+    CUSTOM_PRINT_REQUEST ||--o| QUOTATION : generates
+
+    QUOTATION ||--|{ QUOTATION_LINE_ITEM : details
+
+    SHIPPING_TRACKING ||--o{ TRACKING_EVENT : logs
+```
+
+---
+
+## 2. Complete Prisma Schema (`schema.prisma`)
+
+```prisma
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+// ============================================================
+// 1. Admin Users & Role-Based Access Control (RBAC)
+// ============================================================
+
+enum AdminRole {
+  SUPER_ADMIN
+  WORKSHOP_LEAD
+  SLICING_TECH
+  SUPPORT
+  BILLING
+}
+
+model AdminUser {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String
+  name         String
+  role         AdminRole @default(WORKSHOP_LEAD)
+  avatarUrl    String?
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  internalNotes       OrderInternalNote[]
+  stockAdjustments    StockAdjustmentLog[]
+  auditLogs           AuditLog[]
+
+  @@index([role, isActive])
+  @@map("admin_users")
+}
+
+// ============================================================
+// 2. Customers
+// ============================================================
+
+model Customer {
+  id              String   @id @default(cuid())
+  email           String   @unique
+  fullName        String
+  phone           String
+  company         String?
+  deliveryAddress String?
+  city            String?
+  state           String?
+  pinCode         String?
+  internalNotes   String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  orders          OrderRequest[]
+  customPrints    CustomPrintRequest[]
+  reviews         ProductReview[]
+  quotations      Quotation[]
+
+  @@index([email])
+  @@index([phone])
+  @@map("customers")
+}
+
+// ============================================================
+// 3. Categories & Products
+// ============================================================
+
+model Category {
+  id            String    @id @default(cuid())
+  name          String    @unique
+  slug          String    @unique
+  description   String
+  image         String
+  displayOrder  Int       @default(1)
+  isActive      Boolean   @default(true)
+  subcategories String[]  @default([])
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  products      Product[]
+
+  @@index([slug])
+  @@index([displayOrder])
+  @@map("categories")
+}
+
+enum ProductAvailability {
+  IN_STOCK
+  LOW_STOCK
+  OUT_OF_STOCK
+  MADE_TO_ORDER
+}
+
+enum BadgeVariant {
+  NEW
+  SAMPLE
+  COMING_SOON
+  BESTSELLER
+}
+
+model Product {
+  id                 String              @id @default(cuid())
+  sku                String              @unique
+  slug               String              @unique
+  name               String
+  categoryId         String
+  category           Category            @relation(fields: [categoryId], references: [id])
+  categoryLabel      String?
+  subcategory        String?
+  tagline            String
+  description        String
+  shortDescription   String
+  price              Decimal             @db.Decimal(10, 2)
+  originalPrice      Decimal?            @db.Decimal(10, 2)
+  priceDisplay       String
+  availability       ProductAvailability @default(IN_STOCK)
+  available          Boolean             @default(true)
+  stockQuantity      Int                 @default(10)
+  lowStockThreshold  Int                 @default(5)
+  trackInventory     Boolean             @default(true)
+  allowBackorders    Boolean             @default(false)
+  featured           Boolean             @default(false)
+  bestseller         Boolean             @default(false)
+  newArrival         Boolean             @default(true)
+  imageAlt           String
+  badge              String?
+  badgeVariant       BadgeVariant?
+  rating             Decimal             @default(5.0) @db.Decimal(3, 2)
+  reviewCount        Int                 @default(0)
+  material           String?
+  dimensions         String?
+  weight             String?
+  printingTechnology String?
+  finish             String?
+  colors             String[]            @default([])
+  tags               String[]            @default([])
+  features           String[]            @default([])
+  productionTime     String?
+  href               String
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+
+  images             ProductImage[]
+  specifications     ProductSpecification[]
+  orderItems         OrderRequestItem[]
+  stockLogs          StockAdjustmentLog[]
+  reviews            ProductReview[]
+
+  @@index([slug])
+  @@index([categoryId, available, price])
+  @@index([featured, bestseller, newArrival])
+  @@map("products")
+}
+
+model ProductImage {
+  id           String   @id @default(cuid())
+  productId    String
+  product      Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url          String
+  alt          String
+  displayOrder Int      @default(1)
+  createdAt    DateTime @default(now())
+
+  @@index([productId, displayOrder])
+  @@map("product_images")
+}
+
+model ProductSpecification {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  label     String
+  value     String
+
+  @@index([productId])
+  @@map("product_specifications")
+}
+
+// ============================================================
+// 4. Order Requests & Lifecycle
+// ============================================================
+
+enum OrderRequestStatus {
+  REQUEST_SUBMITTED
+  UNDER_REVIEW
+  AWAITING_CUSTOMER_CONFIRMATION
+  QUOTATION_SENT
+  AWAITING_PAYMENT
+  PAYMENT_CONFIRMED
+  PROCESSING_IN_PRODUCTION
+  QUALITY_CHECK
+  READY_FOR_DISPATCH
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  UNPAID
+  AWAITING_PAYMENT
+  PARTIALLY_PAID
+  PAYMENT_CONFIRMED
+  REFUNDED
+}
+
+model OrderRequest {
+  id                   String             @id @default(cuid())
+  orderId              String             @unique // NWL-ORD-YYYYMMDD-XXXX
+  status               OrderRequestStatus @default(REQUEST_SUBMITTED)
+  paymentStatus        PaymentStatus      @default(UNPAID)
+  customerId           String
+  customer             Customer           @relation(fields: [customerId], references: [id])
+  totalQuantity        Int
+  estimatedSubtotal    Decimal            @db.Decimal(10, 2)
+  shippingFee          Decimal            @default(0.00) @db.Decimal(10, 2)
+  grandTotal           Decimal            @db.Decimal(10, 2)
+  paymentPolicyNote    String
+  estimatedReviewHours Int                @default(24)
+  quotationId          String?            @unique
+  quotation            Quotation?         @relation(fields: [quotationId], references: [id])
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+
+  items                OrderRequestItem[]
+  statusHistory        OrderStatusHistory[]
+  internalNotes        OrderInternalNote[]
+  tracking             ShippingTracking?
+  payments             Payment[]
+
+  @@index([orderId])
+  @@index([status, createdAt])
+  @@index([customerId])
+  @@map("order_requests")
+}
+
+model OrderRequestItem {
+  id                 String       @id @default(cuid())
+  orderRequestId     String
+  orderRequest       OrderRequest @relation(fields: [orderRequestId], references: [id], onDelete: Cascade)
+  productId          String
+  product            Product      @relation(fields: [productId], references: [id])
+  name               String
+  category           String
+  image              String
+  unitPrice          Decimal      @db.Decimal(10, 2)
+  priceDisplay       String
+  quantity           Int
+  selectedColor      String?
+  material           String?
+  maxAllowedQuantity Int          @default(10)
+
+  @@index([orderRequestId])
+  @@index([productId])
+  @@map("order_request_items")
+}
+
+model OrderStatusHistory {
+  id             String             @id @default(cuid())
+  orderRequestId String
+  orderRequest   OrderRequest       @relation(fields: [orderRequestId], references: [id], onDelete: Cascade)
+  status         OrderRequestStatus
+  note           String?
+  updatedBy      String?            // Technician name or "System"
+  timestamp      DateTime           @default(now())
+
+  @@index([orderRequestId, timestamp])
+  @@map("order_status_history")
+}
+
+model OrderInternalNote {
+  id             String       @id @default(cuid())
+  orderRequestId String
+  orderRequest   OrderRequest @relation(fields: [orderRequestId], references: [id], onDelete: Cascade)
+  authorId       String
+  author         AdminUser    @relation(fields: [authorId], references: [id])
+  content        String
+  createdAt      DateTime     @default(now())
+
+  @@index([orderRequestId])
+  @@map("order_internal_notes")
+}
+
+// ============================================================
+// 5. Custom 3D Printing & R2 File Metadata
+// ============================================================
+
+enum CustomPrintStatus {
+  SUBMITTED
+  UNDER_CAD_REVIEW
+  SLICED_PENDING_QUOTE
+  QUOTED
+  ACCEPTED
+  IN_PRODUCTION
+  COMPLETED
+  REJECTED
+}
+
+model CustomPrintRequest {
+  id                     String             @id @default(cuid())
+  referenceId            String             @unique // NWL-REQ-YYYYMMDD-XXXX
+  status                 CustomPrintStatus  @default(SUBMITTED)
+  customerId             String
+  customer               Customer           @relation(fields: [customerId], references: [id])
+  estimatedQuotationHours Int                @default(24)
+  createdAt              DateTime           @default(now())
+  updatedAt              DateTime           @updatedAt
+
+  modelFiles             ModelFile[]
+  requirements           CustomPrintRequirement?
+  quotation              Quotation?
+
+  @@index([referenceId])
+  @@index([status, createdAt])
+  @@map("custom_print_requests")
+}
+
+model ModelFile {
+  id                   String             @id @default(cuid())
+  customPrintRequestId String
+  customPrintRequest   CustomPrintRequest @relation(fields: [customPrintRequestId], references: [id], onDelete: Cascade)
+  fileName             String
+  extension            String             // .stl, .obj, .3mf, .glb, .gltf, .step
+  sizeBytes            BigInt
+  r2Key                String             @unique // models/YYYYMMDD/...
+  contentType          String
+  sha256Hash           String?
+  estimatedDimensions  String?
+  createdAt            DateTime           @default(now())
+
+  @@index([customPrintRequestId])
+  @@index([r2Key])
+  @@map("model_files")
+}
+
+model CustomPrintRequirement {
+  id                   String             @id @default(cuid())
+  customPrintRequestId String             @unique
+  customPrintRequest   CustomPrintRequest @relation(fields: [customPrintRequestId], references: [id], onDelete: Cascade)
+  quantity             Int                @default(1)
+  material             String             // PLA, PETG, ABS, Resin, TPU
+  color                String?
+  finish               String?
+  infillDensity        String?            // e.g. "20% Gyroid"
+  specialInstructions  String?
+
+  @@map("custom_print_requirements")
+}
+
+// ============================================================
+// 6. Quotations
+// ============================================================
+
+enum QuotationStatus {
+  DRAFT
+  READY_FOR_REVIEW
+  SENT
+  ACCEPTED
+  REJECTED
+  EXPIRED
+}
+
+model Quotation {
+  id                   String              @id @default(cuid())
+  quotationNumber      String              @unique // NWL-QT-YYYYMMDD-XXXX
+  customerId           String
+  customer             Customer            @relation(fields: [customerId], references: [id])
+  customPrintRequestId String?             @unique
+  customPrintRequest   CustomPrintRequest? @relation(fields: [customPrintRequestId], references: [id])
+  orderRequest         OrderRequest?
+  materialCharge       Decimal             @default(0.00) @db.Decimal(10, 2)
+  finishingCharge      Decimal             @default(0.00) @db.Decimal(10, 2)
+  designCharge         Decimal             @default(0.00) @db.Decimal(10, 2)
+  deliveryCharge       Decimal             @default(0.00) @db.Decimal(10, 2)
+  subtotal             Decimal             @db.Decimal(10, 2)
+  discount             Decimal             @default(0.00) @db.Decimal(10, 2)
+  tax                  Decimal             @default(0.00) @db.Decimal(10, 2)
+  grandTotal           Decimal             @db.Decimal(10, 2)
+  validityDate         DateTime
+  notes                String?
+  terms                String?
+  status               QuotationStatus     @default(DRAFT)
+  sentAt               DateTime?
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+
+  items                QuotationLineItem[]
+
+  @@index([quotationNumber])
+  @@index([status])
+  @@map("quotations")
+}
+
+model QuotationLineItem {
+  id          String    @id @default(cuid())
+  quotationId String
+  quotation   Quotation @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  quantity    Int       @default(1)
+  unitPrice   Decimal   @db.Decimal(10, 2)
+  total       Decimal   @db.Decimal(10, 2)
+
+  @@index([quotationId])
+  @@map("quotation_line_items")
+}
+
+// ============================================================
+// 7. Payments & Logistics
+// ============================================================
+
+model Payment {
+  id             String        @id @default(cuid())
+  orderRequestId String
+  orderRequest   OrderRequest  @relation(fields: [orderRequestId], references: [id])
+  amount         Decimal       @db.Decimal(10, 2)
+  method         String        // UPI, Bank Transfer, Manual Cash, Razorpay
+  transactionRef String?
+  status         PaymentStatus @default(AWAITING_PAYMENT)
+  paidAt         DateTime?
+  createdAt      DateTime      @default(now())
+
+  @@index([orderRequestId])
+  @@map("payments")
+}
+
+enum CourierName {
+  DELHIVERY
+  BLUEDART
+  DTDC
+  INDIA_POST
+  LOCAL_COURIER
+  WORKSHOP_DIRECT
+}
+
+enum FulfillmentStatus {
+  ORDER_PLACED
+  IN_PRODUCTION
+  QUALITY_CHECKED
+  PACKED
+  DISPATCHED
+  IN_TRANSIT
+  OUT_FOR_DELIVERY
+  DELIVERED
+  DELAYED
+}
+
+model ShippingTracking {
+  id                    String            @id @default(cuid())
+  orderRequestId        String            @unique
+  orderRequest          OrderRequest      @relation(fields: [orderRequestId], references: [id], onDelete: Cascade)
+  trackingNumber        String
+  courierName           CourierName       @default(DELHIVERY)
+  courierUrl            String?
+  fulfillmentStatus     FulfillmentStatus @default(ORDER_PLACED)
+  dispatchDate          DateTime?
+  estimatedDeliveryDate DateTime?
+  actualDeliveryDate    DateTime?
+  originLocation        String            @default("NewtronLabs Workshop, Pune")
+  destinationCity       String
+  trackingNotes         String?
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+
+  events                TrackingEvent[]
+
+  @@index([trackingNumber])
+  @@map("shipping_tracking")
+}
+
+model TrackingEvent {
+  id                 String           @id @default(cuid())
+  shippingTrackingId String
+  shippingTracking   ShippingTracking @relation(fields: [shippingTrackingId], references: [id], onDelete: Cascade)
+  status             String
+  location           String
+  note               String?
+  timestamp          DateTime         @default(now())
+
+  @@index([shippingTrackingId, timestamp])
+  @@map("tracking_events")
+}
+
+// ============================================================
+// 8. Contact Enquiries, Reviews, Inventory & Audit Logs
+// ============================================================
+
+enum ContactEnquiryStatus {
+  NEW
+  IN_PROGRESS
+  RESOLVED
+}
+
+model ContactEnquiry {
+  id                String               @id @default(cuid())
+  customerName      String
+  email             String
+  phone             String?
+  subject           String
+  message           String
+  status            ContactEnquiryStatus @default(NEW)
+  internalReplyNote String?
+  submittedAt       DateTime             @default(now())
+  resolvedAt        DateTime?
+
+  @@index([status, submittedAt])
+  @@map("contact_enquiries")
+}
+
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model ProductReview {
+  id               String       @id @default(cuid())
+  productId        String
+  product          Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  customerId       String?
+  customer         Customer?    @relation(fields: [customerId], references: [id])
+  customerName     String
+  customerEmail    String
+  rating           Int          // 1 to 5
+  title            String
+  comment          String
+  status           ReviewStatus @default(PENDING)
+  verifiedPurchase Boolean      @default(false)
+  createdAt        DateTime     @default(now())
+
+  @@index([productId, status])
+  @@map("product_reviews")
+}
+
+model StockAdjustmentLog {
+  id                 String    @id @default(cuid())
+  productId          String
+  product            Product   @relation(fields: [productId], references: [id])
+  previousQuantity   Int
+  adjustmentQuantity Int
+  updatedQuantity    Int
+  reason             String
+  adjustedById       String
+  adjustedBy         AdminUser @relation(fields: [adjustedById], references: [id])
+  notes              String?
+  timestamp          DateTime  @default(now())
+
+  @@index([productId, timestamp])
+  @@map("stock_adjustment_logs")
+}
+
+model AuditLog {
+  id         String    @id @default(cuid())
+  adminId    String
+  admin      AdminUser @relation(fields: [adminId], references: [id])
+  action     String    // e.g. "ORDER_STATUS_CHANGED", "PRODUCT_UPDATED"
+  entityType String    // "OrderRequest", "Product", "Quotation"
+  entityId   String
+  metadata   Json?
+  timestamp  DateTime  @default(now())
+
+  @@index([adminId, timestamp])
+  @@index([entityType, entityId])
+  @@map("audit_logs")
+}
+```
