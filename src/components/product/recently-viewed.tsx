@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Product } from "@/types/product";
 import { History, ArrowRight } from "lucide-react";
-import { getAllProducts } from "@/data/products";
+import { productService } from "@/services/product-service";
 
 interface RecentlyViewedProps {
   currentProductId: string;
@@ -25,14 +25,15 @@ export function RecentlyViewedProducts({ currentProductId }: RecentlyViewedProps
       const list: string[] = stored ? JSON.parse(stored) : [];
 
       // 2. Fetch all products to lookup
-      const all = getAllProducts();
-      const matching = list
-        .filter((id) => id !== currentProductId)
-        .map((id) => all.find((p) => p.id === id))
-        .filter((p): p is Product => Boolean(p))
-        .slice(0, 4);
+      productService.getAllProducts().then((all) => {
+        const matching = list
+          .filter((id) => id !== currentProductId)
+          .map((id) => all.find((p) => p.id === id))
+          .filter((p): p is Product => Boolean(p))
+          .slice(0, 4);
 
-      setRecentProducts(matching);
+        setRecentProducts(matching);
+      });
 
       // 3. Update storage with current product at the front
       const updated = [currentProductId, ...list.filter((id) => id !== currentProductId)].slice(

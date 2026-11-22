@@ -1,7 +1,7 @@
 import React from "react";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/ui/container";
-import { getAllProducts, getProductBySlug, getRelatedProducts } from "@/data/products";
+import { productService } from "@/services/product-service";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { ProductGallery } from "@/components/product/product-gallery";
 import { ProductPurchaseCard } from "@/components/product/product-purchase-card";
@@ -18,7 +18,7 @@ interface ProductPageProps {
 }
 
 export async function generateStaticParams() {
-  const products = getAllProducts();
+  const products = await productService.getAllProducts();
   return products.map((product) => ({
     slug: product.slug,
   }));
@@ -26,7 +26,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await productService.getProductBySlug(slug);
 
   if (!product) {
     return {
@@ -54,16 +54,42 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 
 export default async function ProductDetailPage({ params }: ProductPageProps) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await productService.getProductBySlug(slug);
 
   if (!product) {
     notFound();
   }
 
-  const related = getRelatedProducts(product, 3);
+  const related = await productService.getRelatedProducts(product, 3);
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    image: product.images,
+    description: product.description,
+    sku: product.sku || product.id,
+    offers: {
+      "@type": "Offer",
+      url: `https://3dprintingwallah.com/shop/${product.slug}`,
+      priceCurrency: "INR",
+      price: product.price || 0,
+      availability:
+        product.availability === "in_stock"
+          ? "https://schema.org/InStock"
+          : product.availability === "low_stock"
+          ? "https://schema.org/LimitedAvailability"
+          : "https://schema.org/OutOfStock",
+    },
+  };
 
   return (
     <div className="pt-4 pb-12 sm:pb-16 bg-[var(--background)] min-h-[calc(100vh-64px)]">
+      {/* Product JSON-LD Structured Data for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Container>
         {/* Dynamic Global Breadcrumb */}
         <Breadcrumbs

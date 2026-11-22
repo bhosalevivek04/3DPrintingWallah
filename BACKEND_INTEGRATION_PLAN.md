@@ -498,8 +498,127 @@ model AuditLog {
 
 ## 4. Cloudflare R2 Model Storage Strategy
 
-1. **Client requests presigned URL**: Customer drops `.stl`, `.step`, or `.obj` file on `/custom/3d-printing`.
-2. **Server generates URL**: `POST /api/custom-prints/upload-url` returns a short-lived presigned PUT URL pointing to private bucket `newtronlabs-models`.
-3. **Direct upload**: Browser uploads file directly to Cloudflare R2 (avoiding server payload limits).
-4. **Metadata record**: Browser sends file metadata, file size, hash, and printing requirements to server.
+1. **Client requests presigned URL**: Customer drops `.stl`, `.step`, `.obj`, `.3mf`, `.glb`, or `.gltf` file on `/custom/3d-printing`.
+2. **Server generates URL**: `POST /api/custom-prints/upload-url` validates MIME/extension, size (< 50MB), and returns a short-lived presigned PUT URL pointing to private bucket `newtronlabs-models`.
+3. **Direct upload**: Browser uploads file directly to Cloudflare R2 (avoiding server memory/payload limits) using `IObjectStorageAdapter` contract.
+4. **Metadata record**: Browser sends file metadata (key, file size, hash, dimensions, and printing requirements) to `/api/custom-print-requests`.
 5. **Admin download**: Technician retrieves authenticated, presigned GET link via `/admin/custom-prints`.
+
+### R2 Bucket Security & CORS Configuration
+```json
+[
+  {
+    "AllowedOrigins": ["https://3dprintingwallah.com", "http://localhost:3000"],
+    "AllowedMethods": ["PUT", "GET"],
+    "AllowedHeaders": ["Content-Type", "Content-Length", "x-amz-meta-*"],
+    "ExposeHeaders": ["ETag"],
+    "MaxAgeSeconds": 3600
+  }
+]
+```
+
+---
+
+## 5. Transactional & Workshop Notification Infrastructure
+
+### Architecture & Service Decoupling
+To eliminate synchronous blocking during order or enquiry submissions, all email and WhatsApp dispatches will transition to an event-driven queue:
+- **Primary Email Provider**: **Resend** (SDK `@resend/node`) or **Amazon SES**.
+- **Fallback Email Provider**: SMTP via Nodemailer with exponential backoff retry.
+- **Queue Engine**: **Inngest** or **BullMQ** (backed by Redis / Upstash Redis).
+- **Delivery Status Webhook**: Endpoint `/api/webhooks/resend` to update `OrderRequest.emailDispatchStatus` upon delivery confirmation or bounce.
+
+### Email Templates Pipeline
+- Rendered using `@react-email/components` for cross-client consistency.
+- Standard templates:
+  1. `OrderRequestReceivedCustomerEmail`: Acknowledges receipt with Order Reference ID and explains review process.
+  2. `OrderRequestWorkshopAlertEmail`: Alerts workshop lead with product details and customer phone/address.
+  3. `QuotationReadyEmail`: Itemized costing with valid-through date and payment confirmation link.
+  4. `OrderDispatchedEmail`: Courier name, AWB tracking number, and live tracking URL.
+
+---
+
+## 6. NextAuth.js / Auth.js Implementation & Middleware Session Boundary
+
+### Session Handling & Middleware Protection
+- Implementation using `next-auth` v5 (`@auth/core`):
+- Sessions stored via HTTP-only, `SameSite=Lax`, `Secure` cookies.
+- Middleware boundary (`src/middleware.ts`):
+```typescript
+import { auth } from "@/auth";
+import { NextResponse } from "next/server";
+
+export default auth((req) => {
+  const { pathname } = req.nextUrl;
+  const isLoggedIn = !!req.auth;
+  const userRole = req.auth?.user?.role;
+
+  if (pathname.startsWith("/admin") && pathname !== "/admin/login") {
+    if (!isLoggedIn) {
+      return NextResponse.redirect(new URL("/admin/login", req.url));
+    }
+    // Operator / Viewer permission constraints
+    if (pathname.startsWith("/admin/settings") && userRole !== "SUPER_ADMIN") {
+      return NextResponse.redirect(new URL("/admin?error=forbidden", req.url));
+    }
+  }
+  return NextResponse.next();
+});
+
+export const config = {
+  matcher: ["/admin/:path*", "/api/admin/:path*"],
+};
+```
+
+---
+
+## 7. Repository Pattern & Migration from Mock Services to PostgreSQL
+
+The codebase is built with explicit TypeScript service contracts (`IProductService`, `IInventoryService`, `ICategoryService`, `IEnquiryService`, `IObjectStorageAdapter`).
+
+### Implementation Strategy
+1. **Zero-Breaking-Change Swap**:
+   Create `PrismaProductService implements IProductService` in `src/services/db/prisma-product-service.ts`.
+2. **Factory Switcher**:
+   Export active instance based on environment:
+   ```typescript
+   export const productService: IProductService = process.env.DATABASE_URL
+     ? new PrismaProductService()
+     : mockProductService;
+   ```
+3. **Database Migration Steps**:
+   - `npx prisma migrate dev --name init_schema`
+   - Seed script importing `@/data/products` and default admin user using Argon2id password hash.
+
+---
+
+## 8. Environment Configuration Matrix (`.env.example`)
+
+```env
+# Application
+NEXT_PUBLIC_APP_URL="https://3dprintingwallah.com"
+NODE_ENV="production"
+
+# Database (PostgreSQL / Supabase / Neon)
+DATABASE_URL="postgresql://user:password@localhost:5432/newtronlabs?schema=public"
+
+# Authentication (NextAuth.js v5)
+AUTH_SECRET="generate-with-openssl-rand-hex-32"
+AUTH_TRUST_HOST="true"
+
+# Cloudflare R2 Object Storage
+R2_ACCOUNT_ID="your-r2-account-id"
+R2_ACCESS_KEY_ID="your-r2-access-key-id"
+R2_SECRET_ACCESS_KEY="your-r2-secret-access-key"
+R2_BUCKET_NAME="newtronlabs-models"
+R2_PUBLIC_DOMAIN="https://models.3dprintingwallah.com"
+
+# Email Services (Resend / SMTP)
+RESEND_API_KEY="re_123456789"
+SMTP_HOST="smtp.postmarkapp.com"
+SMTP_PORT=587
+SMTP_USER="your-smtp-username"
+SMTP_PASS="your-smtp-password"
+BUSINESS_EMAIL="support@newtronlabs.in"
+NOTIFICATION_EMAIL="workshop@newtronlabs.in"
+```

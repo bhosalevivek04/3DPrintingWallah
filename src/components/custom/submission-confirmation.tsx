@@ -82,6 +82,19 @@ export function SubmissionConfirmation({ request, onReset }: SubmissionConfirmat
             )}
           </button>
         </div>
+
+        {/* Model File Storage State Callout */}
+        <div className="mt-4 p-3.5 rounded-xl border border-stone-200 bg-stone-50/80 text-left max-w-lg w-full text-xs flex flex-col gap-1.5">
+          <div className="flex items-center justify-between">
+            <span className="font-bold text-[var(--color-text-primary)]">3D Model File Status:</span>
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-[var(--color-brand)] border border-blue-200">
+              Cached Locally (IndexedDB)
+            </span>
+          </div>
+          <p className="text-[11px] text-[var(--color-text-secondary)] leading-relaxed">
+            Your file <strong className="font-semibold text-[var(--color-text-primary)]">{request.modelFile.name}</strong> ({request.modelFile.formattedSize}) and printing specifications have been recorded in our workshop queue. The raw file remains cached in your local browser session until cloud object storage (R2/S3) is connected.
+          </p>
+        </div>
       </div>
 
       {/* What Happens Next - Timeline */}
@@ -168,6 +181,19 @@ export function SubmissionConfirmation({ request, onReset }: SubmissionConfirmat
             <RotateCcw className="h-3.5 w-3.5" />
             <span>Submit Another Model</span>
           </button>
+        </div>
+
+        {/* Model File Storage State Callout */}
+        <div className="mt-4 p-3.5 rounded-xl border border-stone-200 bg-stone-50/80 text-left max-w-lg w-full text-xs flex flex-col gap-1.5">
+          <div className="flex items-center justify-between">
+            <span className="font-bold text-[var(--color-text-primary)]">3D Model File Status:</span>
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-[var(--color-brand)] border border-blue-200">
+              Cached Locally (IndexedDB)
+            </span>
+          </div>
+          <p className="text-[11px] text-[var(--color-text-secondary)] leading-relaxed">
+            Your file <strong className="font-semibold text-[var(--color-text-primary)]">{request.modelFile.name}</strong> ({request.modelFile.formattedSize}) and printing specifications have been recorded in our workshop queue. The raw file remains cached in your local browser session until cloud object storage (R2/S3) is connected.
+          </p>
         </div>
       </div>
     </div>

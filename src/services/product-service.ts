@@ -1,5 +1,5 @@
 import { Product, ProductCategory, ProductAvailability } from "@/types/product";
-import { products as baseProducts } from "@/data/products";
+import { products as baseProducts, SHOP_CATEGORIES } from "@/data/products";
 
 export interface ProductFilterParams {
   category?: ProductCategory | "All Products";
@@ -33,6 +33,8 @@ export interface IProductService {
   getBestSellers(limit?: number): Promise<Product[]>;
   getNewArrivals(limit?: number): Promise<Product[]>;
   getPopularCollectibles(limit?: number): Promise<Product[]>;
+  getRelatedProducts(currentProduct: Product, limit?: number): Promise<Product[]>;
+  getCategoryCounts(): Promise<Record<ProductCategory, number>>;
   createProduct(product: Partial<Product>): Promise<Product>;
   updateProduct(id: string, updates: Partial<Product>): Promise<Product | null>;
   duplicateProduct(id: string): Promise<Product | null>;
@@ -127,6 +129,35 @@ class MockProductService implements IProductService {
         p.category === "Miniatures"
     );
     return list.slice(0, limit);
+  }
+
+  async getRelatedProducts(currentProduct: Product, limit: number = 3): Promise<Product[]> {
+    const list = this.getMergedProducts();
+    return list
+      .filter((p) => p.id !== currentProduct.id)
+      .sort((a, b) => {
+        const aCategoryMatch = a.category === currentProduct.category ? 2 : 0;
+        const bCategoryMatch = b.category === currentProduct.category ? 2 : 0;
+        const aTagOverlap = a.tags.filter((t) => currentProduct.tags.includes(t)).length;
+        const bTagOverlap = b.tags.filter((t) => currentProduct.tags.includes(t)).length;
+        return bCategoryMatch + bTagOverlap - (aCategoryMatch + aTagOverlap);
+      })
+      .slice(0, limit);
+  }
+
+  async getCategoryCounts(): Promise<Record<ProductCategory, number>> {
+    const list = this.getMergedProducts();
+    const counts: Record<string, number> = {
+      "All Products": list.length,
+    };
+
+    SHOP_CATEGORIES.forEach((cat) => {
+      if (cat !== "All Products") {
+        counts[cat] = list.filter((p) => p.category === cat).length;
+      }
+    });
+
+    return counts as Record<ProductCategory, number>;
   }
 
   async createProduct(payload: Partial<Product>): Promise<Product> {

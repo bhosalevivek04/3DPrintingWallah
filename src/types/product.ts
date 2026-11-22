@@ -46,6 +46,8 @@ export interface Product {
   featured?: boolean;
   bestseller?: boolean;
   newArrival?: boolean;
+  createdAt?: number;
+  updatedAt?: number;
   images: string[];
   imageAlt: string;
   badge?: string;

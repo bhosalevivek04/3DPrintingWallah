@@ -90,5 +90,11 @@ export interface OrderRequestResponse {
   message: string;
   orderId?: string;
   order?: OrderRequest;
+  emailResult?: {
+    sentToCustomer: boolean;
+    sentToTeam: boolean;
+    status: "delivered" | "unconfigured" | "failed";
+    notes?: string;
+  };
   error?: string;
 }

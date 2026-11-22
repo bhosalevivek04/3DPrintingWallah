@@ -4,7 +4,7 @@ import React, { useRef, useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { Product } from "@/types/product";
 import { ProductCard } from "@/components/shop/product-card";
-import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ArrowRight, Pause, Play } from "lucide-react";
 
 interface ProductShowcaseCarouselProps {
   eyebrow?: string;
@@ -108,7 +108,10 @@ export function ProductShowcaseCarousel({
       ref={containerRef}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
+      onFocusCapture={() => setIsPaused(true)}
+      onBlurCapture={() => setIsPaused(false)}
       className="py-12 sm:py-16 overflow-hidden"
+      aria-label={title}
     >
       <div className="max-w-[1440px] mx-auto px-4 lg:px-8">
         {/* Header Row */}
@@ -140,8 +143,17 @@ export function ProductShowcaseCarousel({
               </Link>
             )}
 
-            {/* Navigation Arrows */}
+            {/* Navigation Arrows & Accessible Autoplay Toggle */}
             <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => setIsPaused((prev) => !prev)}
+                aria-label={isPaused ? "Resume carousel autoplay" : "Pause carousel autoplay"}
+                title={isPaused ? "Play" : "Pause"}
+                className="h-9 w-9 rounded-full border border-[var(--border)] bg-white text-[var(--foreground)] hover:bg-stone-50 flex items-center justify-center transition-all shadow-2xs active:scale-90 cursor-pointer"
+              >
+                {isPaused ? <Play className="h-3.5 w-3.5" /> : <Pause className="h-3.5 w-3.5" />}
+              </button>
               <button
                 type="button"
                 onClick={() => scrollByAmount("left")}

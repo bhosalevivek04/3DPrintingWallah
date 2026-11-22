@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { products } from "@/data/products";
+import { productService } from "@/services/product-service";
 import {
   CreateOrderRequestPayload,
   OrderRequest,
   OrderRequestResponse,
 } from "@/types/order";
 import { CartItem } from "@/types/cart";
-import { sendOrderRequestEmails } from "@/lib/email/order-email-service";
+import { sendOrderRequestEmails, EmailDispatchResult } from "@/lib/email/order-email-service";
 
 // In-memory order requests repository for active instance/prototype
 // Global object attached for development HMR persistence
@@ -155,7 +155,7 @@ export async function POST(req: NextRequest) {
     let totalQuantity = 0;
 
     for (const rawItem of rawItems) {
-      const canonicalProduct = products.find((p) => p.id === rawItem.productId);
+      const canonicalProduct = await productService.getProductById(rawItem.productId);
       if (!canonicalProduct) {
         return NextResponse.json<OrderRequestResponse>(
           {
@@ -236,8 +236,15 @@ export async function POST(req: NextRequest) {
     ordersStore.set(orderId, newOrder);
 
     // 5. Send Email Notifications (Customer acknowledgment + Workshop team alert)
+    let emailResult: EmailDispatchResult = {
+      sentToCustomer: false,
+      sentToTeam: false,
+      provider: "unconfigured",
+      status: "unconfigured",
+      notes: "Email service not invoked.",
+    };
     try {
-      await sendOrderRequestEmails(newOrder);
+      emailResult = await sendOrderRequestEmails(newOrder);
     } catch (emailErr) {
       console.warn("Email service notice:", emailErr);
     }
@@ -247,6 +254,7 @@ export async function POST(req: NextRequest) {
         success: true,
         orderId,
         order: newOrder,
+        emailResult,
         message: "Your order request has been received! Our workshop team will contact you shortly.",
       },
       { status: 201 }
@@ -271,11 +279,12 @@ export async function GET(req: NextRequest) {
 
   if (!ref && !email) {
     return NextResponse.json(
-      { error: "Provide either a reference ID (?ref=...) or customer email (?email=...)" },
+      { error: "Provide an Order Reference ID (?ref=NWL-ORD-...) to look up order tracking status." },
       { status: 400 }
     );
   }
 
+  // 1. Reference ID Lookup with Sanitized Customer Projection
   if (ref) {
     const formattedRef = ref.toUpperCase().trim();
     const found = ordersStore.get(formattedRef);
@@ -285,21 +294,62 @@ export async function GET(req: NextRequest) {
         { status: 404 }
       );
     }
-    return NextResponse.json({ success: true, order: found });
+
+    // Sanitize projection to protect customer PII
+    const nameParts = found.customer.fullName.trim().split(" ");
+    const firstName = nameParts[0] || "Customer";
+    const lastNameInitial = nameParts.length > 1 ? ` ${nameParts[nameParts.length - 1][0]}.` : "";
+
+    const emailParts = found.customer.email.split("@");
+    const maskedEmail = emailParts.length === 2
+      ? `${emailParts[0].slice(0, 2)}***@${emailParts[1]}`
+      : "Protected";
+
+    const cleanPhone = found.customer.phone.replace(/\D/g, "");
+    const maskedPhone = cleanPhone.length >= 4
+      ? `***-***-${cleanPhone.slice(-4)}`
+      : "Protected";
+
+    const sanitizedOrder = {
+      orderId: found.orderId,
+      status: found.status,
+      paymentStatus: found.paymentStatus,
+      totalQuantity: found.totalQuantity,
+      estimatedSubtotal: found.estimatedSubtotal,
+      createdAt: found.createdAt,
+      updatedAt: found.updatedAt,
+      estimatedReviewHours: found.estimatedReviewHours,
+      customer: {
+        fullName: `${firstName}${lastNameInitial}`,
+        email: maskedEmail,
+        phone: maskedPhone,
+        city: found.customer.city,
+        state: found.customer.state,
+        pinCode: found.customer.pinCode,
+        preferredContactMethod: found.customer.preferredContactMethod,
+      },
+      items: found.items.map((i) => ({
+        name: i.name,
+        quantity: i.quantity,
+        category: i.category,
+        selectedColor: i.selectedColor,
+      })),
+      courierName: found.courierName,
+      trackingNumber: found.trackingNumber,
+      dispatchDate: found.dispatchDate,
+      estimatedDeliveryDate: found.estimatedDeliveryDate,
+    };
+
+    return NextResponse.json({ success: true, order: sanitizedOrder });
   }
 
+  // 2. Unauthenticated email querying is restricted to protect customer privacy
   if (email) {
-    const formattedEmail = email.toLowerCase().trim();
-    const matches: OrderRequest[] = [];
-    ordersStore.forEach((ord) => {
-      if (ord.customer.email.toLowerCase() === formattedEmail) {
-        matches.push(ord);
-      }
-    });
-
-    return NextResponse.json({
-      success: true,
-      orders: matches,
-    });
+    return NextResponse.json(
+      {
+        error: "Direct email enumeration is disabled for customer privacy. Please enter your unique Order Reference ID (e.g. NWL-ORD-...) to track status.",
+      },
+      { status: 403 }
+    );
   }
 }

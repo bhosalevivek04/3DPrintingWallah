@@ -14,19 +14,28 @@ import {
 import { ProductSortBar, SortOption } from "@/components/shop/product-sort";
 import { ProductGrid } from "@/components/shop/product-grid";
 import { ProductPagination } from "@/components/shop/product-pagination";
-import { getCategoryCounts } from "@/data/products";
 
 interface ShopCatalogClientProps {
   initialProducts: Product[];
+  serverCategory?: string;
+  serverSort?: string;
+  serverQuery?: string;
+  serverPage?: number;
 }
 
 const ITEMS_PER_PAGE = 6;
 
-export function ShopCatalogClient({ initialProducts }: ShopCatalogClientProps) {
+export function ShopCatalogClient({
+  initialProducts,
+  serverCategory,
+  serverSort,
+  serverQuery,
+  serverPage,
+}: ShopCatalogClientProps) {
   const searchParams = useSearchParams();
-  const categoryParam = searchParams.get("category");
+  const categoryParam = serverCategory || searchParams.get("category");
 
-  // Initial Category from URL param if valid
+  // Initial Category from URL param or server prop if valid
   const initialCategory: ProductCategory = useMemo(() => {
     if (!categoryParam) return "All Products";
     if (categoryParam.toLowerCase() === "personalised") return "Custom Creations";
@@ -44,11 +53,26 @@ export function ShopCatalogClient({ initialProducts }: ShopCatalogClientProps) {
     return (found as ProductCategory) || "All Products";
   }, [categoryParam]);
 
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(serverQuery || "");
   const [activeCategory, setActiveCategory] = useState<ProductCategory>(initialCategory);
-  const [sortOption, setSortOption] = useState<SortOption>("recommended");
-  const [currentPage, setCurrentPage] = useState(1);
+  const [sortOption, setSortOption] = useState<SortOption>(
+    (serverSort as SortOption) || "recommended"
+  );
+  const [currentPage, setCurrentPage] = useState(serverPage && serverPage > 0 ? serverPage : 1);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+
+  // Synchronize browser URL query parameters without full page reload
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams();
+    if (activeCategory !== "All Products") params.set("category", activeCategory);
+    if (sortOption !== "recommended") params.set("sort", sortOption);
+    if (searchQuery.trim()) params.set("q", searchQuery.trim());
+    if (currentPage > 1) params.set("page", String(currentPage));
+
+    const newUrl = params.toString() ? `/shop?${params.toString()}` : "/shop";
+    window.history.replaceState(null, "", newUrl);
+  }, [activeCategory, sortOption, searchQuery, currentPage]);
 
   const [filters, setFilters] = useState<ShopFilterState>({
     category: initialCategory,
@@ -65,7 +89,24 @@ export function ShopCatalogClient({ initialProducts }: ShopCatalogClientProps) {
     }
   }, [initialCategory]);
 
-  const categoryCounts = useMemo(() => getCategoryCounts(), []);
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = {
+      "All Products": initialProducts.length,
+    };
+    [
+      "Collectibles",
+      "Anime Figures",
+      "Miniatures",
+      "Home Decor",
+      "Desk Accessories",
+      "Planters",
+      "Gaming",
+      "Custom Creations",
+    ].forEach((cat) => {
+      counts[cat] = initialProducts.filter((p) => p.category === cat).length;
+    });
+    return counts as Record<ProductCategory, number>;
+  }, [initialProducts]);
 
   // Filter Handler
   const handleFilterChange = <K extends keyof ShopFilterState>(
@@ -159,7 +200,11 @@ export function ShopCatalogClient({ initialProducts }: ShopCatalogClientProps) {
           return (b.rating ?? 0) - (a.rating ?? 0);
         }
         if (sortOption === "newest") {
-          return a.id.localeCompare(b.id);
+          const timeA = typeof a.createdAt === "number" ? a.createdAt : a.createdAt ? new Date(a.createdAt).getTime() : 0;
+          const timeB = typeof b.createdAt === "number" ? b.createdAt : b.createdAt ? new Date(b.createdAt).getTime() : 0;
+          if (timeA !== timeB) return timeB - timeA;
+          // Deterministic fallback: preserve stable order
+          return a.name.localeCompare(b.name);
         }
         // Recommended: natural catalogue order
         return 0;

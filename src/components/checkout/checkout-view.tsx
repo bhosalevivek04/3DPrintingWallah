@@ -48,6 +48,12 @@ export function CheckoutView() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [submittedOrder, setSubmittedOrder] = useState<OrderRequest | null>(null);
+  const [emailResult, setEmailResult] = useState<{
+    sentToCustomer: boolean;
+    sentToTeam: boolean;
+    status: "delivered" | "unconfigured" | "failed";
+    notes?: string;
+  } | null>(null);
 
   // Field change handler
   const handleChange = (
@@ -134,6 +140,7 @@ export function CheckoutView() {
       // Success: Clear cart & save confirmation
       clearCart();
       setSubmittedOrder(data.order);
+      setEmailResult(data.emailResult || null);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
       setErrorMessage(
@@ -182,9 +189,25 @@ export function CheckoutView() {
                 Thank You, {submittedOrder.customer.fullName}!
               </h1>
               <p className="text-sm text-[var(--muted-foreground)] mt-1.5 max-w-lg mx-auto">
-                Your order request has been logged in our workshop system. We have also sent a confirmation summary to{" "}
-                <strong className="text-[var(--foreground)]">{submittedOrder.customer.email}</strong>.
+                {emailResult?.sentToCustomer ? (
+                  <>
+                    Your order request has been logged in our workshop system. We have also sent a confirmation summary to{" "}
+                    <strong className="text-[var(--foreground)]">{submittedOrder.customer.email}</strong>.
+                  </>
+                ) : (
+                  <>
+                    Your order request has been recorded in our workshop queue. Please note: automated email confirmations are currently awaiting mail provider configuration in this environment; please save your Reference ID below for tracking.
+                  </>
+                )}
               </p>
+              <div className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-stone-200 bg-stone-50 text-[11px] text-stone-600">
+                <Info className="h-3 w-3 text-stone-500 shrink-0" />
+                <span>
+                  {emailResult?.sentToCustomer
+                    ? "Confirmation email sent."
+                    : "Email service in development mode (no external email sent)."}
+                </span>
+              </div>
             </div>
           </div>
 

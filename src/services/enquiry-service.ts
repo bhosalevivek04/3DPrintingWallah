@@ -1,8 +1,17 @@
 import { ContactEnquiry, EnquiryStatus } from "@/types/admin";
 
+export interface CreateEnquiryDTO {
+  customerName: string;
+  email: string;
+  phone?: string;
+  subject: string;
+  message: string;
+}
+
 export interface IEnquiryService {
   getAllEnquiries(): Promise<ContactEnquiry[]>;
   getEnquiryById(id: string): Promise<ContactEnquiry | null>;
+  createEnquiry(payload: CreateEnquiryDTO): Promise<ContactEnquiry>;
   updateEnquiryStatus(
     id: string,
     status: EnquiryStatus,
@@ -80,6 +89,23 @@ class EnquiryService implements IEnquiryService {
   async getEnquiryById(id: string): Promise<ContactEnquiry | null> {
     this.loadStorage();
     return this.enquiries.find((e) => e.id === id) || null;
+  }
+
+  async createEnquiry(payload: CreateEnquiryDTO): Promise<ContactEnquiry> {
+    this.loadStorage();
+    const newEnquiry: ContactEnquiry = {
+      id: `enq-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 6)}`,
+      customerName: payload.customerName,
+      email: payload.email,
+      phone: payload.phone || "",
+      subject: payload.subject,
+      message: payload.message,
+      status: "New",
+      submittedAt: Date.now(),
+    };
+    this.enquiries.unshift(newEnquiry);
+    this.saveStorage();
+    return newEnquiry;
   }
 
   async updateEnquiryStatus(

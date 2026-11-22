@@ -6,7 +6,7 @@ import { CustomPrintingSection } from "@/components/home/custom-printing-section
 import { HowItWorksSection } from "@/components/home/how-it-works-section";
 import { WhyChooseSection } from "@/components/home/why-choose-section";
 import { FAQSection } from "@/components/home/faq-section";
-import { products } from "@/data/products";
+import { productService } from "@/services/product-service";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -15,17 +15,19 @@ export const metadata: Metadata = {
     "3D Printing Wallah creates custom 3D-printed products and brings your ideas to life. Find an everyday object, make it personal, or start something of your own.",
 };
 
-export default function HomePage() {
-  const bestSellers = products.filter(
+export default async function HomePage() {
+  const allProducts = await productService.getAllProducts();
+
+  const bestSellers = allProducts.filter(
     (p) => p.badge === "Bestseller" || p.bestseller || (p.reviewCount && p.reviewCount >= 20)
   );
-  const featured = products.filter(
+  const featured = allProducts.filter(
     (p) => p.featured || (p.rating && p.rating >= 4.8)
   );
-  const newArrivals = products.filter(
+  const newArrivals = allProducts.filter(
     (p) => p.newArrival || p.badge === "New" || p.badge === "Popular"
   );
-  const collectibles = products.filter(
+  const collectibles = allProducts.filter(
     (p) =>
       p.category === "Collectibles" ||
       p.category === "Anime Figures" ||
@@ -43,7 +45,7 @@ export default function HomePage() {
         eyebrow="Community Favorites"
         title="Best Selling 3D Creations"
         description="Our most loved planters, modular trays, and functional desk objects printed and layer-finished in our workshop."
-        products={bestSellers.length > 0 ? bestSellers : products.slice(0, 5)}
+        products={bestSellers.length > 0 ? bestSellers : allProducts.slice(0, 5)}
         viewAllHref="/shop"
         viewAllLabel="Explore catalogue"
       />
@@ -56,7 +58,7 @@ export default function HomePage() {
         eyebrow="Curated Highlights"
         title="Featured Studio Prints"
         description="Handcrafted objects demonstrating precise geometric tolerances, matte tactile surfaces, and durable infill."
-        products={featured.length > 0 ? featured : products.slice(2, 7)}
+        products={featured.length > 0 ? featured : allProducts.slice(2, 7)}
         viewAllHref="/shop"
       />
 
@@ -68,7 +70,7 @@ export default function HomePage() {
         eyebrow="Sculptures & Figures"
         title="Popular Collectibles & Gaming"
         description="Intricately sliced character busts, headphone docks, and tabletop collectibles with micro-layer resolution."
-        products={collectibles.length > 0 ? collectibles : products}
+        products={collectibles.length > 0 ? collectibles : allProducts}
         viewAllHref="/shop?category=Collectibles"
         viewAllLabel="View collectibles"
       />
@@ -78,7 +80,7 @@ export default function HomePage() {
         eyebrow="Fresh from the Workshop"
         title="New Arrivals"
         description="Recent workshop releases designed for modern homes and creative workspaces."
-        products={newArrivals.length > 0 ? newArrivals : products.slice(0, 4)}
+        products={newArrivals.length > 0 ? newArrivals : allProducts.slice(0, 4)}
         viewAllHref="/shop"
       />
 

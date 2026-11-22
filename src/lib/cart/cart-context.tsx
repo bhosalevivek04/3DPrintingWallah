@@ -61,59 +61,55 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         return { success: false, message: "This product is currently out of stock." };
       }
 
-      let outcomeMessage = "";
+      const targetKey = getItemKey(options.productId, options.selectedColor);
+      const existing = items.find((i) => getItemKey(i.productId, i.selectedColor) === targetKey);
 
-      setItems((prevItems) => {
-        const targetKey = getItemKey(options.productId, options.selectedColor);
-        const existingIndex = prevItems.findIndex(
-          (i) => getItemKey(i.productId, i.selectedColor) === targetKey
-        );
+      let success = true;
+      let message = "";
 
-        if (existingIndex > -1) {
-          const current = prevItems[existingIndex];
-          const newQty = current.quantity + quantity;
-          const cappedQty = Math.min(newQty, options.maxAllowedQuantity);
+      if (existing) {
+        const newQty = existing.quantity + quantity;
+        const cappedQty = Math.min(newQty, options.maxAllowedQuantity);
 
-          if (cappedQty === current.quantity) {
-            outcomeMessage = `Maximum limit (${options.maxAllowedQuantity}) already in cart.`;
-            return prevItems;
-          }
-
-          outcomeMessage = `Updated "${options.name}" quantity to ${cappedQty}.`;
-          const updated = [...prevItems];
-          updated[existingIndex] = {
-            ...current,
-            quantity: cappedQty,
-            maxAllowedQuantity: options.maxAllowedQuantity,
-          };
-          return updated;
+        if (cappedQty === existing.quantity) {
+          success = false;
+          message = `Maximum limit (${options.maxAllowedQuantity}) already in cart.`;
         } else {
-          const initialQty = Math.min(quantity, options.maxAllowedQuantity);
-          outcomeMessage = `Added ${initialQty}x "${options.name}" to cart.`;
-          const newItem: CartItem = {
-            productId: options.productId,
-            slug: options.slug,
-            name: options.name,
-            category: options.category,
-            image: options.image,
-            unitPrice: options.unitPrice,
-            priceDisplay: options.priceDisplay,
-            quantity: initialQty,
-            availability: options.availability,
-            maxAllowedQuantity: options.maxAllowedQuantity,
-            selectedColor: options.selectedColor,
-            material: options.material,
-          };
-          return [...prevItems, newItem];
+          message = `Updated "${options.name}" quantity to ${cappedQty}.`;
         }
-      });
 
-      return {
-        success: true,
-        message: outcomeMessage || `Added "${options.name}" to your cart.`,
-      };
+        setItems((prevItems) =>
+          prevItems.map((item) =>
+            getItemKey(item.productId, item.selectedColor) === targetKey
+              ? { ...item, quantity: cappedQty, maxAllowedQuantity: options.maxAllowedQuantity }
+              : item
+          )
+        );
+      } else {
+        const initialQty = Math.min(quantity, options.maxAllowedQuantity);
+        message = `Added ${initialQty}x "${options.name}" to cart.`;
+
+        const newItem: CartItem = {
+          productId: options.productId,
+          slug: options.slug,
+          name: options.name,
+          category: options.category,
+          image: options.image,
+          unitPrice: options.unitPrice,
+          priceDisplay: options.priceDisplay,
+          quantity: initialQty,
+          availability: options.availability,
+          maxAllowedQuantity: options.maxAllowedQuantity,
+          selectedColor: options.selectedColor,
+          material: options.material,
+        };
+
+        setItems((prevItems) => [...prevItems, newItem]);
+      }
+
+      return { success, message };
     },
-    []
+    [items]
   );
 
   const removeItem = useCallback((productId: string, selectedColor?: string) => {

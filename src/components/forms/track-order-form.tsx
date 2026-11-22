@@ -45,21 +45,19 @@ export function TrackOrderForm() {
     setCustomPrintFound(null);
 
     try {
-      // 1. Try order-requests API
-      const isEmail = trimmed.includes("@");
-      const orderUrl = isEmail
-        ? `/api/order-requests?email=${encodeURIComponent(trimmed)}`
-        : `/api/order-requests?ref=${encodeURIComponent(trimmed)}`;
+      // 1. Try order-requests API with Reference ID
+      if (trimmed.includes("@")) {
+        setError("For customer privacy, order tracking requires your unique Order Reference ID (e.g. NWL-ORD-...). Please check your submission confirmation.");
+        setLoading(false);
+        return;
+      }
 
+      const orderUrl = `/api/order-requests?ref=${encodeURIComponent(trimmed)}`;
       const orderRes = await fetch(orderUrl);
       if (orderRes.ok) {
         const orderData = await orderRes.json();
         if (orderData.order) {
           setFoundOrder(orderData.order);
-          setLoading(false);
-          return;
-        } else if (orderData.orders && orderData.orders.length > 0) {
-          setFoundOrder(orderData.orders[0]);
           setLoading(false);
           return;
         }

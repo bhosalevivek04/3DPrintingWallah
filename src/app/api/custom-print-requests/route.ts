@@ -44,6 +44,19 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const ext = (body.modelFile.extension || body.modelFile.name.slice(body.modelFile.name.lastIndexOf("."))).toLowerCase();
+    const allowedExtensions = [".stl", ".obj", ".3mf", ".glb", ".gltf"];
+    if (!allowedExtensions.includes(ext)) {
+      return NextResponse.json<SubmissionResponse>(
+        {
+          success: false,
+          message: `Validation failed: Unsupported file type "${ext}". Supported formats are ${allowedExtensions.join(", ")}.`,
+          error: "Unsupported file extension",
+        },
+        { status: 400 }
+      );
+    }
+
     if (body.modelFile.size > 50 * 1024 * 1024) {
       return NextResponse.json<SubmissionResponse>(
         {
